@@ -1,0 +1,101 @@
+dnf install zsh
+#interactividad
+dnf install fzf
+ejecutar fzf
+-------------------------------------------------------------------------------------------------------------------
+Instalar Oh my Zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+
+cambiar el theme si se quiere 
+
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+Probar tiempo real
+time zsh -i -c exit 
+
+Si larga mucho tiempo. Cargamos zprof en el principio de .zshrc
+zmodload zsh/zprof
+
+al final de .zshrc
+zprof
+---------------------------------------------------------------------------------------------------------------------
+
+En realidad ZIM es mejor en cuanto a velocidad.
+https://github.com/zimfw/zimfw
+
+comando 
+curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
+
+luego
+
+zimfw install
+
+Actualizar cada vez que hacemos actualizacion de plugins
+zimfw unistall
+zimfw install
+
+sudo chsh -s /usr/bin/zsh
+
+agregar un theme, ir a .zimrc
+zmodule <nombre>
+zimfw install
+
+--------------------------------------------------------------
+
+Lazyload
+Conceptos a tener en cuenta
+Si creamos alguna funcionalidad tiene que estar dentro de archivo algo_que_tarda.sh creado como funcion
+
+En .zshrc cargamos al final
+
+
+## solo carga si es llamada. la funcion debe ser llamada con otro nombre
+# si le ponemos el mismo falla, sino ver más abao otra opcion
+function aqt {
+    #existe el contenido de la funcion? retorna la funcion
+    fname=$(declare -f -F algo_que_tarda)
+    # si existe o cargar desde...
+    [ -n "$fname" ] || source "$HOME/algo_que_tarda.sh"
+    
+    #con parametros algo_que_tarda "$1"
+    algo_que_tarda
+    
+}
+
+
+Cuando llamamos en la terminal aqt se carga algo_que_tarda
+
+
+Si queremos usar el mismo nombr en funcion
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+nvm() {
+unset -f nvm node npm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+nvm "$@"
+}
+node() {
+unset -f nvm node npm
+export NVM_DIR=~/.nvm
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
+node "$@"
+}
+npm() {
+unset -f nvm node npm
+export NVM_DIR=~/.nvm
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
+npm "$@"
+}
+
+
+----------
+Acutalizar zimfw
+#update actualiza plugins
+# upgrade actualizar framework zim
+zimfw update && zimfw upgrade
+
+
+Zsh apt-get o dnf

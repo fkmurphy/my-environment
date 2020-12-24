@@ -1,0 +1,32 @@
+function docker_interactive_exec {
+	local selected_container=$(docker ps | awk '{if (NR!=1) print $1 ": " $(NF)}' | fzf )
+#	echo $containers
+	local container=$(echo $selected_container | awk '{print $1}')
+	container=${container%%':'}
+    shell='bash'
+	if [[ $# -eq 0 ]] || [[ $1 == 'bash' ]]; then
+	    docker exec -ti $container bash
+
+    elif [[ $1 == 'sh' ]]; then
+		docker exec -ti $container sh
+    else
+        while [ ! -z $1 ]; do
+            arg="$1"
+            shift
+            case "$arg" in
+                -u|--user)
+                    user="$1"
+                    shift
+                    ;;
+                -s|--shell)
+                    shell="$1"
+                    shift
+                    ;;
+            esac
+         done
+         docker exec -ti --user="${user}" $container "${shell}"
+
+    fi
+
+	
+}

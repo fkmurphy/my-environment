@@ -1,0 +1,30 @@
+dnf install zsh
+#interactividad
+dnf install fzf
+ejecutar fzf
+
+En realidad ZIM es mejor en cuanto a velocidad.
+https://github.com/zimfw/zimfw
+
+comando 
+curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
+
+luego
+
+zimfw install
+
+Actualizar cada vez que hacemos actualizacion de plugins
+zimfw unistall
+zimfw install
+
+sudo chsh -s /usr/bin/zsh
+
+agregar un theme, ir a .zimrc
+zmodule <nombre>
+zimfw install
+
+
+Acutalizar zimfw
+#update actualiza plugins
+# upgrade actualizar framework zim
+zimfw update && zimfw upgrade
