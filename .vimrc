@@ -1,13 +1,12 @@
 "custom
 set mouse=a "interactuar con mouse en vim
-set tabstop=4
 set number "mostrar num de linea
 set numberwidth=1 "ancho de numeros
+"set clipboard+=unnamedplus "compartir clipboard del SO
 set clipboard=unnamed "compartir clipboard del SO
 set showcmd "mostrar comandos
-set encoding=utf-8
+set encoding=UTF-8
 set showmatch "resaltar parentisis de cierre
-set sw=4 "identar texto con 2
 set relativenumber "cursor numero hacia lados (numero relativos)
 "set laststatus=4 "barra visible, siempre. PArece que no funciona
 set laststatus=2
@@ -19,13 +18,16 @@ set shell=/usr/bin/zsh
 "https://github.com/vim/vim/issues/2790
 set re=1
 
-"syntax sync minlines=30000
-autocmd BufEnter * :syntax sync fromstart
-let c_minlines=1000
 "default
 "set showmode
+"
+"tab config
 set autoindent
+set sw=4 "identar texto con 2
+set tabstop=4
 set expandtab
+set smarttab
+
 "syntax on 
 set ruler
 
@@ -53,9 +55,12 @@ Plug 'easymotion/vim-easymotion'
 " Arbol
 Plug 'scrooloose/nerdtree'
 "fzf search in tree
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
+"surround () 
+" yss, ysiw, ds and V + S<p>
+Plug 'tpope/vim-surround'
 "Navegacion entre ventanas
 " ctrl + h j k l para cambiar de lugar
 Plug 'christoomey/vim-tmux-navigator'
@@ -69,13 +74,18 @@ else
 endif
 Plug 'tpope/vim-fugitive'
 
+"highlight for nerdtree
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" status git in nerdtree
+Plug 'Xuyuanp/nerdtree-git-plugin'
+
 "php
 Plug 'vim-scripts/taglist.vim'
 Plug 'StanAngeloff/php.vim'
 Plug 'ervandew/supertab'
-Plug 'nlknguyen/papercolor-theme'
+"Plug 'nlknguyen/papercolor-theme'
 Plug 'vim-airline/vim-airline'
-Plug 'borissov/vim-mysql-suggestions'
+"Plug 'borissov/vim-mysql-suggestions'
 "Plug 'jparise/vim-graphql'
 Plug 'scrooloose/syntastic'
 "Plug 'yggdroot/indentline' " identar
@@ -88,8 +98,9 @@ Plug 'mhinz/vim-startify'
 
 "THEMES
 "theme colors php js jsx etc
-Plug 'connorholyday/vim-snazzy'
-Plug 'mhartington/oceanic-next'
+"Plug 'connorholyday/vim-snazzy'
+"Plug 'mhartington/oceanic-next'
+Plug 'morhetz/gruvbox'
 
 "multiple languages
 Plug 'sheerun/vim-polyglot'
@@ -98,8 +109,16 @@ if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 endif
 
+
+"plguins python flake
+"Plug 'andviro/flake8-vim'
+
 "bottom bar
 "Plug 'itchyny/lightline.vim' Other bottom bar
+
+"icons in bar
+"load last. Install nerd-font and set in terminal
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 " config theme
@@ -114,10 +133,21 @@ let g:oceanic_next_terminal_italic = 1
   set termguicolors
  endif
 "finish oceanicnext config
-"colorscheme gruvbox
+colorscheme gruvbox
 "colorscheme murphy
 "colorscheme snazzy
-colorscheme OceanicNext
+"colorscheme OceanicNext
+
+"let g:monokai_term_italic = 1
+"let g:monokai_gui_italic = 1
+"set guifont=DejaVuSansMono\ Nerd\ Font\ 11
+"set guifont=DroidSansMono\ Nerd\ Font\ 11
+set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
+let g:webdevicons_enable_nerdtree = 1
+"set langmenu=en_US.UTF-8
+"let g:WebDevIconsNerdTreeAfterGlyphPadding = '  '
+set conceallevel=3
+"let g:WebDevIconsUnicodeDecorateFileNodesDefaultSymbol='x'
 
 let g:gruvbox_contrast_dark = "hard" "contraste alto
 
@@ -144,6 +174,7 @@ nmap <Leader>q :q<CR>
 "nmap <Leader><C-f> :Files<CR>
 nmap <Leader>f :Files<CR>
 nmap <Leader>b :Buffers<CR>
+nmap <Leader>ag :Ag<CR>
 nmap <Leader>fb :History<CR>
 
 nmap <Leader>vr :vertical res 
@@ -178,26 +209,31 @@ inoremap { {}<left>
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
 
+augroup nerdTree
+    "syntax sync minlines=30000
+    autocmd BufEnter * :syntax sync fromstart
+    let c_minlines=1000
+    autocmd StdinReadPre * let s:std_in=1
 
-autocmd StdinReadPre * let s:std_in=1
+    autocmd VimEnter * NERDTree
+    "autocmd VimEnter * NERDTreeTabsOpen 
+    "autocmd VimEnter * NERDTreeMirror
+    autocmd VimEnter * NERDTree
+    autocmd VimEnter * wincmd p
 
-autocmd VimEnter * NERDTree
-"autocmd VimEnter * NERDTreeTabsOpen 
-"autocmd VimEnter * NERDTreeMirror
-autocmd VimEnter * NERDTree
-autocmd VimEnter * wincmd p
+    "autocmd StdinReadPre * let s:std_in=1
 
-autocmd StdinReadPre * let s:std_in=1
+    "sin startify
+    "autocmd vimenter * NERDTree
+    "
+    "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+    "autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+    "
+    map <C-n> :NERDTreeToggle<CR>
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+    "execute 'NERDTreeTabsToggle'
 
-"sin startify
-"autocmd vimenter * NERDTree
-"
-"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-"autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
-"
-map <C-n> :NERDTreeToggle<CR>
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-"execute 'NERDTreeTabsToggle'
+augroup END
 
 "autocmd VimEnter *
 "                \   if !argc()
@@ -226,6 +262,7 @@ hi phpClassNamespaceSeparator guifg=#808080 guibg=NONE gui=NONE
 syn match phpParentOnly "[()]" contained containedin=phpParent
 hi phpParentOnly guifg=#f08080 guibg=NONE gui=NONE
 
+
 let g:deoplete#enable_at_startup = 1
 let g:phpcd_php_cli_executable = 'php7.3'
 
@@ -234,6 +271,29 @@ endif
 
 "nerdtree hidden files show
 let NERDTreeShowHidden=1
+
+"pyflake8
+nnoremap <leader>sc :SyntasticCheck<CR>
+"let g:PyFlakeCheckers = 'pep8,mccabe,frosted'
+"let g:PyFlakeMaxLineLength = 79
+"let g:PyFlakeForcePyVersion = 3
+"let g:PyFlakeDefaultComplexity=10
+let g:syntastic_python_flake8_config_file='.flake8'
+let g:syntastic_python_checkers = ['flake8', 'pylint']
+let g:syntastic_python_pylint_post_args="--max-line-length=79"
+""recommend settings
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+if exists("g:loaded_webdevicons")
+  call webdevicons#refresh()
+endif
 
 " Usos
 " nerdtree espacio + nt
