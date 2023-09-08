@@ -119,6 +119,15 @@ endif
 "icons in bar
 "load last. Install nerd-font and set in terminal
 Plug 'ryanoasis/vim-devicons'
+
+if has('nvim')
+ "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"markdown preview
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }}
+
+"Debuger
+Plug 'puremourning/vimspector'
 call plug#end()
 
 " config theme
@@ -295,6 +304,13 @@ if exists("g:loaded_webdevicons")
   call webdevicons#refresh()
 endif
 
+" markdown config
+if has('nvim')
+    let g:mkdp_auto_close = 0
+    nnoremap <M-m> :MarkdownPreview<CR>
+endif
+
+let g:vimspector_enable_mappings = 'HUMAN'
 " Usos
 " nerdtree espacio + nt
 " Con m ver opciones de agregar, modif, etc.

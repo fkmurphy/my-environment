@@ -16,7 +16,8 @@ set shell=zsh
 "set shellcmdflag=-ci
 "syntax highliting error. Break large files
 "https://github.com/vim/vim/issues/2790
-set re=1
+set re=0
+set redrawtime=10000
 
 "default
 "set showmode
@@ -25,6 +26,11 @@ set re=1
 set autoindent
 set sw=4 "identar texto con 2
 set tabstop=4
+autocmd FileType javascript,typescript,html setlocal shiftwidth=2 tabstop=2 softtabstop=0 expandtab
+
+"" Fold or minimize code
+set foldmethod=marker foldmarker={,} foldlevel=2
+
 set expandtab
 set smarttab
 
@@ -32,7 +38,7 @@ set smarttab
 set ruler
 
 "git updatetime
-set updatetime=100
+set updatetime=300
 
 "polyglot
 set nocompatible
@@ -75,14 +81,16 @@ endif
 Plug 'tpope/vim-fugitive'
 
 "highlight for nerdtree
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+"""""Plug 'tiagofumo/vim-nerdtree-syntax-highlight' FORKED 0.8 nvim fail
+Plug 'johnstef99/vim-nerdtree-syntax-highlight'
 " status git in nerdtree
 Plug 'Xuyuanp/nerdtree-git-plugin'
 
 "php
 Plug 'vim-scripts/taglist.vim'
-Plug 'StanAngeloff/php.vim'
-Plug 'ervandew/supertab'
+"Plug 'StanAngeloff/php.vim'
+"disble supertab for use coc.nvim suggest :verbose imap <tab>
+"""""""Plug 'ervandew/supertab'
 "Plug 'nlknguyen/papercolor-theme'
 Plug 'vim-airline/vim-airline'
 "Plug 'borissov/vim-mysql-suggestions'
@@ -91,7 +99,7 @@ Plug 'scrooloose/syntastic'
 "Plug 'yggdroot/indentline' " identar
 Plug 'symfony/symfony'
 "Plug 'blueshirts/darcula'
-Plug 'adoy/vim-php-refactoring-toolbox'
+"Plug 'adoy/vim-php-refactoring-toolbox'
 
 "session save
 Plug 'mhinz/vim-startify'
@@ -104,12 +112,33 @@ Plug 'morhetz/gruvbox'
 
 "multiple languages
 Plug 'sheerun/vim-polyglot'
+Plug 'LaTeX-Box-Team/LaTeX-Box'
 
 if has('nvim')
  "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"markdown preview
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }}
+
+Plug 'vim-vdebug/vdebug'
+
+"Debuger
+Plug 'puremourning/vimspector'
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+Plug 'wuelnerdotexe/vim-astro'
+" install rust plugin
+Plug 'rust-lang/rust.vim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'simrat39/rust-tools.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'mfussenegger/nvim-dap'
 
 endif
+
+let g:astro_typescript = 'enable'
+let g:astro_stylus = 'enable'
 
 
 "plguins python flake
@@ -128,8 +157,8 @@ call plug#end()
 " Theme
 set t_Co=256
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-"let g:airline_theme='gruvbox'
-let g:airline_theme='oceanicnext'
+let g:airline_theme='gruvbox'
+"let g:airline_theme='oceanicnext'
 "let g:oceanic_next_terminal_bold = 1
 "let g:oceanic_next_terminal_italic = 1
 " for vim 8
@@ -193,7 +222,7 @@ nmap <Leader>vr :vertical res
 " go to definition coc.nvim
 if has('nvim')
 function! s:GoToDefinition()
-  if CocAction('jumpDefinition')
+  if CocAction('jumpDefinition', 'drop')
     return v:true
   endif
 
@@ -204,6 +233,13 @@ function! s:GoToDefinition()
 endfunction
 
 nmap <Leader>gd :call <SID>GoToDefinition()<CR>
+nnoremap <silent><leader>gr :<C-u>call CocAction('jumpReferences')<CR>
+
+function! s:clearFloatingWindowsFix()
+    lua for _, win in ipairs(vim.api.nvim_list_wins()) do local config = vim.api.nvim_win_get_config(win); if config.relative ~= "" then vim.api.nvim_win_close(win, false); print('Closing window', win) end end
+endfunction
+nmap <Leader>CF :call <SID>clearFloatingWindowsFix()<CR>
+
 endif
 "OpenSPlit in FZF.vim 
 "C-x horizontal split 
@@ -242,7 +278,6 @@ augroup nerdTree
     let c_minlines=1000
     autocmd StdinReadPre * let s:std_in=1
 
-    autocmd VimEnter * NERDTree
     "autocmd VimEnter * NERDTreeTabsOpen 
     "autocmd VimEnter * NERDTreeMirror
     autocmd VimEnter * NERDTree
@@ -273,8 +308,6 @@ augroup END
 "
 "php refactor toolbox plugin
 "nnoremap <unique> <Leader>rnv :call PhpRenameLocalVariable()<CR>
-
-
 if has('nvim')
 function! PhpSyntaxOverride()
   " Put snippet overrides in this function.
@@ -311,21 +344,60 @@ let g:syntastic_python_flake8_config_file='.flake8'
 let g:syntastic_python_checkers = ['flake8', 'pylint']
 let g:syntastic_python_pylint_post_args="--max-line-length=79"
 let g:syntastic_mode_map = {
-    \ "mode": "active",
-    \ "passive_filetypes": ["php"] }
+    \ "mode": "passive",
+    \ "passive_filetypes": ["php", "py"] }
 ""recommend settings
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+"""""let g:syntastic_always_populate_loc_list = 1
+"""""let g:syntastic_auto_loc_list = 1
+"""""let g:syntastic_check_on_open = 1
+"""""let g:syntastic_check_on_wq = 0
 
 if exists("g:loaded_webdevicons")
   call webdevicons#refresh()
 endif
+
+" markdown config
+if has('nvim')
+    let g:mkdp_auto_close = 0
+    nnoremap <M-m> :MarkdownPreview<CR>
+endif
+
+let g:vimspector_enable_mappings = 'HUMAN'
+"git clone https://github.com/puremourning/vimspector ~/.vim/pack/vimspector/opt/vimspector
+packadd! vimspector
+
+
+"" xdebug
+let g:vdebug_options = {}
+let g:vdebug_options['port'] = 9003
+let g:vdebug_options['request'] = 'launch'
+let g:vdebug_options['ide_key'] = 'VVVDEBUG'
+
+lua require'nvim-treesitter.configs'.setup{highlight={enable=true}} 
+
+
+"" backspace config <tab> identation
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+"" autocomplete suggestions
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+"let g:vdebug_options.path_maps = {'/var/www/html': '${workspaceFolder}/src'}
+
 
 " Usos
 " nerdtree espacio + nt

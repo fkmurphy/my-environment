@@ -72,7 +72,7 @@ WORDCHARS=${WORDCHARS//[\/]}
 
 # Customize the style that the suggestions are shown with.
 # See https://github.com/zsh-users/zsh-autosuggestions/blob/master/README.md#suggestion-highlight-style
-#ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=10'
+#ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 #
 # zsh-syntax-highlighting
@@ -85,14 +85,14 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 # Customize the main highlighter styles.
 # See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/main.md#how-to-tweak-it
 #typeset -A ZSH_HIGHLIGHT_STYLES
-#ZSH_HIGHLIGHT_STYLES[comment]='fg=10'
+#ZSH_HIGHLIGHT_STYLES[comment]='fg=242'
 
 # ------------------
 # Initialize modules
 # ------------------
 
-if [[ ${ZIM_HOME}/init.zsh -ot ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
-  # Update static initialization script if it's outdated, before sourcing it
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
+  # Update static initialization script if it does not exist or it's outdated, before sourcing it
   source ${ZIM_HOME}/zimfw.zsh init -q
 fi
 source ${ZIM_HOME}/init.zsh
@@ -122,31 +122,36 @@ bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
 # }}} End configuration added by Zim install
 
-source $HOME/.aliases
+alias code=$HOME/dev
+alias dkc=docker-compose
+alias dk=docker
+alias tmux='tmux -u'
+#INVOICE_SERVICE_GATEWAY_API_KEY=‘xxxxxxxxxx’
+export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
+export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
 
-function dkb {
-    local function_name="docker_interactive_exec"
-    #existe el contenido de la funcion? retorna la funcion
-    fname=$(declare -f -F $function_name)
-    # si existe o cargar desde...
-    [ -n "$fname" ] || source "$SCRIPT_DIRECTORY/$function_name"
-
-    #con parametros algo_que_tarda "$1"
-    $function_name $@
-}
-
-_reverse_search() {
-	local selected_command=$(fc -rl 1 | awk '{$1="";print substr($0,2)}' | fzf)
-	LBUFFER=$selected_command
-	#echo -ne $selected_command" "
-}
-
-zle	-N	_reverse_search
-bindkey '^r'	_reverse_search
-
-if [ -p '/tmp/ckbpipe012' ]; then
-	PS1+='$(ckbgit)'
-fi
-
-
+source ~/.aliases
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Created by `pipx` on 2022-06-01 21:43:08
+export PATH="$PATH:/Users/mimac/.local/bin"
+
+# Created by `pipx` on 2022-06-01 21:43:09
+export PATH="$PATH:/usr/local/bin"
+
+export PATH="$PATH:/Users/mimac/.huff/bin"
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+export PATH="/usr/local/opt/mysql-client/bin:/usr/local/opt/openssl@3/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+export GPG_TTY=$(tty)
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+#alias get_idf='. $HOME/dev/personal/esp32-wifi-penetration-tool/esp-idf/export.sh'

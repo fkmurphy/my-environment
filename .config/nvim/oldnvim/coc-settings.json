@@ -1,0 +1,42 @@
+{
+  "languageserver": {
+    "go": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod"],
+      "trace.server": "verbose",
+      "filetypes": ["go"]
+    },
+    "intelephense": {
+      "command": "intelephense",
+      "args": ["--stdio"],
+      "filetypes": ["php"],
+      "initializationOptions": {
+        "storagePath": "/tmp/intelephense"
+      }
+    },
+    "solidity": {
+      "command": "/usr/local/bin/solc",
+      "args": [ "--lsp" ],
+      "rootPatterns": [".git/"],
+      "filetypes": ["solidity"]
+    },
+  },
+  //"astro.enable": true,
+  "tsserver.enableJavascript": true,
+  "typescript.autoClosingTags": true,
+  "tsserver.log": "normal",
+  "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+  "typescript.format.semicolons": "remove",
+  "typescript.preferences.quoteStyle": "double",
+  "typescript.referencesCodeLens.enable": false,
+  "typescript.preferences.useAliasesForRenames": true,
+  "coc.source.emoji.filetypes": ["markdown"],
+  "codeLens.enable": true,
+  "diagnostic.errorSign": "✘",
+  "diagnostic.warningSign": "",
+  "diagnostic.infoSign": "",
+  "diagnostic.enableMessage": "jump",
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextCurrentLineOnly": false
+}

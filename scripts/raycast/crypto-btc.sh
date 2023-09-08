@@ -13,6 +13,6 @@
 # @raycast.description Get current Bitcoin price from Coindesk.
 # @raycast.icon images/bitcoin-logo.png
 
-price=$(curl -s http://api.coindesk.com/v1/bpi/currentprice.json | python -c "import json, sys; print(json.load(sys.stdin)['bpi']['USD']['rate'])")
+price=$(curl -s https://api.coingecko.com/api/v3/coins/bitcoin | python -c "import json, sys; print(json.load(sys.stdin)['market_data']['current_price']['usd'])")
 
-echo "\$${price}"}]]])))
+echo "\$${price}"
