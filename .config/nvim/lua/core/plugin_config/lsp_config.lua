@@ -28,7 +28,13 @@ require("mason-lspconfig").setup({
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 require('lspsaga').setup({
-  code_action_icon = "💡",
+  lightbulb = {
+    sign = false,
+  },
+  ui = {
+    code_action = "📈",
+    -- border = 'none',
+  },
   symbol_in_winbar = {
     in_custom = false,
     enable = true,
