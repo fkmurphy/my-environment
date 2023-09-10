@@ -84,3 +84,7 @@ Leader key = space
 
 ### No search (highlight)
 `<Leader> + h`
+
+## Snippets [rafamadriz/friendly-snippets](https://github.com/rafamadriz/friendly-snippets)
+You can use snippets, for example:
+`html5` --> generate html template
