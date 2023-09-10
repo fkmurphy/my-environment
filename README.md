@@ -88,3 +88,14 @@ Leader key = space
 ## Snippets [rafamadriz/friendly-snippets](https://github.com/rafamadriz/friendly-snippets)
 You can use snippets, for example:
 `html5` --> generate html template
+
+## Bugs
+
+Currently i have a bug with the [highlight limit](https://github.com/neovim/neovim/blob/e6ff154be6da8bd53b604fb6e38686acae75b24f/src/nvim/syntax.c#L101). Check this:
+```
+:hi OR :verbose hi
+:hi clear
+```
+
+I think it's possible that the dracula theme generates too many lines (highlighted lines).
+Check another theme `gruvbox`. And review `:colorscheme gruvbox`
