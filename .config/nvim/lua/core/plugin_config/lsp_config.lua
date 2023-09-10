@@ -1,4 +1,29 @@
-require("mason-lspconfig").setup()
+-- configuration https://nvimdev.github.io/lspsaga/
+
+local lspconfig = require("lspconfig")
+
+require("mason-lspconfig").setup({
+    ensure_installed = {
+        'tsserver',
+        'eslint',
+        'html',
+        'cssls'
+    },
+    handlers = {
+        function(server)
+        lspconfig[server].setup({})
+        end,
+        ['tsserver'] = function()
+        lspconfig.tsserver.setup({
+            settings = {
+            completions = {
+                completeFunctionCalls = true
+            }
+            }
+        })
+        end
+    }
+})
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
@@ -18,7 +43,7 @@ vim.keymap.set('n', 'K', '<Cmd>Lspsaga hover_doc<cr>', { silent = true })
 vim.keymap.set({"n","v"}, "<leader>ca", "<cmd>Lspsaga code_action<CR>", { silent = true })
 vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { silent = true })
 
-require("lspconfig").lua_ls.setup {
+lspconfig.lua_ls.setup {
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -35,10 +60,10 @@ require("lspconfig").lua_ls.setup {
   }
 }
 
-require("lspconfig").solargraph.setup {
+lspconfig.solargraph.setup {
   capabilities = capabilities,
 }
 
-require("lspconfig").pyright.setup {
+lspconfig.pyright.setup {
   capabilities = capabilities,
 }
