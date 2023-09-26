@@ -7,7 +7,7 @@ require("mason-lspconfig").setup({
         'tsserver',
         'eslint',
         'html',
-        'cssls'
+        'cssls',
     },
     handlers = {
         function(server)
