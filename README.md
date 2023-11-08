@@ -7,6 +7,30 @@ git clone --depth 1 https://github.com/wbthomason/packer.nvim\
  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 ```
 
+## Requirements
+For [`telescope.nvim` package](https://github.com/nvim-telescope/telescope.nvim), install [ripgrep](https://github.com/BurntSushi/ripgrep#installation)
+
+```sh
+brew install ripgrep
+```
+
+Install `fd`
+```sh
+brew install fd
+```
+
+Install LSP typescript
+```sh
+npm install -g typescript typescript-language-server
+```
+
+# Verify health
+```
+:checkhealth
+```
+
+
+
 ## Cheatsheet
 
 Leader key = space
@@ -99,3 +123,30 @@ Currently i have a bug with the [highlight limit](https://github.com/neovim/neov
 
 I think it's possible that the dracula theme generates too many lines (highlighted lines).
 Check another theme `gruvbox`. And review `:colorscheme gruvbox`
+
+### tree-sitter executable not found?
+```
+brew install tree-sitter
+```
+
+### vim-fugitive (git commit gpg) for mac
+Install
+```
+brew install pinentry-mac
+```
+
+Create new file `~/.gnupg/gpg-agent.conf`
+```
+pinentry-program /usr/local/bin/pinentry-mac
+```
+
+Add to `.zshrc`
+```sh
+GPG_TTY=$(tty)
+export PINENTRY_USER_DATA="USE_CURSES=1"
+```
+
+Restart gpg-agent
+```sh
+gpgconf --kill gpg-agent
+```
