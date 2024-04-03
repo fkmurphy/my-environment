@@ -76,7 +76,9 @@ local plugins = {
     "neovim/nvim-lspconfig",
     "williamboman/mason-lspconfig.nvim",
     -- prettier for typescript projects (lara wrong format after save)
-    "prettier/vim-prettier",
+    -- "prettier/vim-prettier",
+    -- replace vim-prettier with prettierd mason
+    "mhartington/formatter.nvim",
     -- rules typescript eslint, rename files
     -- archived 'jose-elias-alvarez/nvim-lsp-ts-utils',
     "glepnir/lspsaga.nvim",
@@ -90,7 +92,8 @@ local plugins = {
         "kylechui/nvim-surround",
         version = "*", -- Use for stability; omit to use `main` branch for the latest features
         event = "VeryLazy"
-    }
+    },
+    'mfussenegger/nvim-lint'
 }
 
 local opts = {}

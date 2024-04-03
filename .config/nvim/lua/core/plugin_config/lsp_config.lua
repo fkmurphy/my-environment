@@ -11,6 +11,8 @@ require("mason-lspconfig").setup({
         'html',
         'diagnosticls',
         'cssls',
+        'astro',
+        'solidity'
     },
     handlers = {
         function(server, opts)
@@ -85,24 +87,6 @@ vim.diagnostic.config({
     },
 })
 
--- autosave all
--- vim.cmd[[autocmd BufWritePre * lua vim.lsp.buf.format()]]
-vim.cmd [[
-augroup fmt
-    autocmd!
-    autocmd BufWritePre *.mjs,*.css,*.less,*.scss,*.json,*.yaml,*.html,*.tsx,*.jsx,*.ts,*.js PrettierAsync
-    autocmd BufWritePre *.py,*.php lua vim.lsp.buf.format({ async: true })
-augroup END
-]]
--- vim.api.nvim_create_autocmd("BufWritePre", {
---     buffer = buffer,
---     callback = function()
---         vim.lsp.buf.format { async = false }
---     end
---
--- })
-
-
 require('lspsaga').setup({
     lightbulb = {
         sign = false,
@@ -120,16 +104,21 @@ require('lspsaga').setup({
     },
 })
 
-vim.keymap.set("n", "<Leader>gd", "<cmd>Lspsaga goto_definition<CR>", { silent = true })
-vim.keymap.set("n", "<Leader>pd", "<cmd>Lspsaga peek_definition<CR>", { silent = true })
-vim.keymap.set("n", "<Leader>gr", "<cmd>Lspsaga finder<CR>", { silent = true })
-vim.keymap.set("n", "<Leader>lo", "<cmd>Lspsaga outline<CR>", { silent = true })
+local opts = { noremap= true, silent = true }
+
+vim.keymap.set("n", "<Leader>gd", "<cmd>Lspsaga goto_definition<CR>", opts)
+vim.keymap.set("n", "<Leader>pd", "<cmd>Lspsaga peek_definition<CR>", opts)
+vim.keymap.set("n", "<Leader>gr", "<cmd>Lspsaga finder<CR>", opts)
+vim.keymap.set("n", "<Leader>lo", "<cmd>Lspsaga outline<CR>", opts)
 -- vim.keymap.set("n", "gd", "<cmd>Lspsaga lsp_finder<CR>", { silent = true })
-vim.keymap.set('n', 'K', '<Cmd>Lspsaga hover_doc<cr>', { silent = true })
-vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<CR>", { silent = true })
-vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { silent = true })
-vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<Leader>ke', vim.diagnostic.setloclist) -- https://www.reddit.com/r/neovim/comments/vkugqr/new_plugin_to_show_diagnostics_in_a_split_window/
+vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<cr>', opts)
+-- vim.keymap.set('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', opts)
+vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts)
+vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts)
+vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, opts)
+vim.keymap.set('n', '<Leader>ge', "<cmd>Lspsaga diagnostic_jump_next<CR>", opts)
+vim.keymap.set('n', '<Leader>gp', "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
+vim.keymap.set('n', '<Leader>ke', vim.diagnostic.setloclist, opts) -- https://www.reddit.com/r/neovim/comments/vkugqr/new_plugin_to_show_diagnostics_in_a_split_window/
 
 
 lspconfig.lua_ls.setup {

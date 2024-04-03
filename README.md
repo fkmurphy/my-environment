@@ -24,6 +24,11 @@ Install LSP typescript
 npm install -g typescript typescript-language-server
 ```
 
+Install prettierd
+```
+brew install fsouza/prettierd/prettierd
+```
+
 # Verify health
 ```
 :checkhealth
@@ -58,7 +63,7 @@ Leader key = space
 
 ### Debugger (DAP UI)
 **Run or debug function**
-`<Leader> k` 
+`<Leader> k`
 
 **Set breakpoint**
 `<Leader> dt`
@@ -112,6 +117,9 @@ Leader key = space
 ## Snippets [rafamadriz/friendly-snippets](https://github.com/rafamadriz/friendly-snippets)
 You can use snippets, for example:
 `html5` --> generate html template
+
+## Formatter
+Use formatter for nvim with `prettierd`
 
 ## Bugs
 
