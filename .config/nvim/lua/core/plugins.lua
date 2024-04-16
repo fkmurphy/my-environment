@@ -37,6 +37,7 @@ local plugins = {
         opts = {},
     },
 
+    "nvim-neotest/nvim-nio",
 
     -- dir tree
     'nvim-tree/nvim-tree.lua',

@@ -38,6 +38,8 @@ brew install fsouza/prettierd/prettierd
 
 ## Cheatsheet
 
+READ cheatsheet zimfw https://zimfw.sh/docs/cheatsheet/
+
 Leader key = space
 
 ### LSP
