@@ -90,6 +90,9 @@ vim.diagnostic.config({
 require('lspsaga').setup({
     lightbulb = {
         sign = false,
+       -- autocmd = {
+       --     enabled = false
+       -- }
     },
     ui = {
         code_action = "🤔",

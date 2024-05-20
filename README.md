@@ -29,11 +29,15 @@ Install prettierd
 brew install fsouza/prettierd/prettierd
 ```
 
+Fonts 
+
+https://www.nerdfonts.com/font-downloads
+> recommend font: Hack Nerd Font https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Hack.zip
+
 # Verify health
 ```
 :checkhealth
 ```
-
 
 
 ## Cheatsheet
@@ -160,3 +164,4 @@ Restart gpg-agent
 ```sh
 gpgconf --kill gpg-agent
 ```
+

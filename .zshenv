@@ -18,4 +18,6 @@ export SCRIPT_DIRECTORY="$HOME/scripts"
 export EMOJI_CLI_KEYBIND=^e
 
 export PATH="$PATH:/Users/mimac/.foundry/bin"
-. "$HOME/.cargo/env
+export LARA_HOME=~/dev/lara
+export PATH=$PATH:$LARA_HOME/docker
+. $HOME/.cargo/env

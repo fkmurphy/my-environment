@@ -135,12 +135,12 @@ source ~/.aliases
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Created by `pipx` on 2022-06-01 21:43:08
-export PATH="$PATH:/Users/mimac/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # Created by `pipx` on 2022-06-01 21:43:09
 export PATH="$PATH:/usr/local/bin"
 
-export PATH="$PATH:/Users/mimac/.huff/bin"
+export PATH="$PATH:$HOME/.huff/bin"
 export PATH="/usr/local/opt/libpq/bin:$PATH"
 export PATH="/usr/local/opt/mysql-client/bin:/usr/local/opt/openssl@3/bin:$PATH"
 
@@ -152,6 +152,6 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 export GPG_TTY=$(tty)
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+#eval "$(pyenv init -)"
+#eval "$(pyenv virtualenv-init -)"
 #alias get_idf='. $HOME/dev/personal/esp32-wifi-penetration-tool/esp-idf/export.sh'

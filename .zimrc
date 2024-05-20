@@ -20,9 +20,8 @@ zmodule utility
 # Exposes git repository status information to prompts.
 zmodule git-info
 # A customizable version of steeef's prompt theme.
-#zmodule steeef
+zmodule steeef
 #zmodule eriner
-zmodule eriner
 #zmodule denysdovhan/spaceship-prompt --name spaceship
 #zstyle ':zim:prompt' theme 'spaceship' 'cyan' 'blue'
 #zstyle ':zim:git-info' ignore-submodules 'none'
