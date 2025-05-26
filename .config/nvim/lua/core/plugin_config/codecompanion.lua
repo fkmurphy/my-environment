@@ -11,7 +11,7 @@ llm.setup({
           },
         },
         env = {
-          url = "http://10.0.10.218:11434",
+          url = "http://x.x.x.x:11434",
           -- api_key = "OLLAMA_API_KEY",
         },
         headers = {

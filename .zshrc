@@ -155,3 +155,11 @@ export GPG_TTY=$(tty)
 #eval "$(pyenv init -)"
 #eval "$(pyenv virtualenv-init -)"
 #alias get_idf='. $HOME/dev/personal/esp32-wifi-penetration-tool/esp-idf/export.sh'
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+# grep (brew install grep to use -P)
+if [ -d "/opt/homebrew/opt/grep/libexec/gnubin" ]; then
+    export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+fi
+if command -v ggrep > /dev/null 2>&1; then
+    alias grep='ggrep --color'
+fi
