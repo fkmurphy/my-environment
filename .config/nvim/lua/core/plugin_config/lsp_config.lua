@@ -6,13 +6,14 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protoc
 
 require("mason-lspconfig").setup({
     ensure_installed = {
-        'tsserver',
+        'ts_ls',
         'eslint',
         'html',
         'diagnosticls',
         'cssls',
         'astro',
-        'solidity'
+        'solidity',
+        'pyright'
     },
     handlers = {
         function(server, opts)
@@ -32,8 +33,8 @@ require("mason-lspconfig").setup({
                 },
             })
         end,
-        ['tsserver'] = function()
-            lspconfig.tsserver.setup({
+        ['ts_ls'] = function()
+            lspconfig.ts_ls.setup({
                 capabilities = capabilities,
                 settings = {
                     typescript = {
@@ -88,12 +89,9 @@ vim.diagnostic.config({
 })
 
 require('lspsaga').setup({
-    lightbulb = {
-        sign = false,
        -- autocmd = {
        --     enabled = false
        -- }
-    },
     ui = {
         code_action = "🤔",
         -- border = 'none',
@@ -159,7 +157,7 @@ lspconfig.tflint.setup {
 -- lspconfig.eslint.setup {
 --     enable = false
 -- }
--- lspconfig.tsserver.setup {
+-- lspconfig.ts_ls.setup {
 --     enable = false
 -- }
 

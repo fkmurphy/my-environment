@@ -12,7 +12,7 @@ vim.opt.cursorline = true
 vim.opt.autoread = true
 vim.opt.relativenumber = true
 vim.opt.shell = "zsh"
-vim.o.noshowmode = true
+-- vim.o.noshowmode = true
 vim.opt.clipboard = "unnamed"
 vim.opt.mouse = "a"
 vim.opt.re = 0
@@ -20,7 +20,7 @@ vim.opt.redrawtime = 10000
 vim.opt.updatetime = 300
 
 -- use spaces for tabs and whatnot
-vim.o.autoident = true
+-- vim.o.autoident = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.shiftround = true

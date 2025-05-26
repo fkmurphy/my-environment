@@ -11,6 +11,8 @@ cmp.setup({
       ['<C-o>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.abort(),
       ['<CR>'] = cmp.mapping.confirm({ select = true }),
+      -- ["<A-y>"] = require('minuet').make_cmp_map()
+
     }),
   snippet = {
     expand = function(args)
@@ -18,6 +20,7 @@ cmp.setup({
     end,
   },
   sources = cmp.config.sources({
+    -- { name = 'minuet' },
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
   }, {

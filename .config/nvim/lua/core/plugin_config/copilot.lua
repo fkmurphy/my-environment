@@ -2,3 +2,23 @@
 --highlight gray
 --highlight gray guifg=
 -- vim.cmd[[highlight CopilotSuggestion ctermfg=8 guifg=white guibg=#5c6370]]
+
+-- vim.g.copilot_no_tab_map = true
+-- vim.g.copilot_filetypes = {
+--     ["*"] = true,
+--     -- markdown = false,
+--     -- text = false,
+-- }
+--
+-- vim.api.nvim_set_keymap(
+--     "i",
+--     "<C-J>",
+--     'copilot#Accept("<CR>")',
+--     { silent = true, expr = true }
+-- )
+--
+-- -- flotante off
+-- vim.cmd([[
+--   autocmd FileType copilot disable
+-- ]])
+-- vim.cmd([[echo "Copilot configurado correctamente"]])

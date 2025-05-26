@@ -63,6 +63,8 @@ require("formatter").setup {
     yaml = { require('formatter.defaults.prettierd')},
     mjs = { require('formatter.defaults.prettierd')},
     tsx = { require('formatter.defaults.prettierd')},
+    typescriptreact = { require('formatter.defaults.prettierd')},
+    javascriptreact = { require('formatter.defaults.prettierd')},
     -- njk = { require('formatter.default.djlint')},
 
     -- Use the special "*" filetype for defining formatter configurations on

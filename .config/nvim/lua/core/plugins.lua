@@ -53,7 +53,6 @@ local plugins = {
     -- git decorations and use into the vim
     'lewis6991/gitsigns.nvim',
     'tpope/vim-fugitive',
-    -- not use "github/copilot.vim",
     --
     -- tmux interact
     'preservim/vimux',
@@ -82,10 +81,10 @@ local plugins = {
     "mhartington/formatter.nvim",
     -- rules typescript eslint, rename files
     -- archived 'jose-elias-alvarez/nvim-lsp-ts-utils',
-    "glepnir/lspsaga.nvim",
+    "nvimdev/lspsaga.nvim",
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.0',
+        tag = '0.1.4',
         dependencies = { { 'nvim-lua/plenary.nvim' } }
     },
     -- surround quotes, parent, etc
@@ -94,7 +93,19 @@ local plugins = {
         version = "*", -- Use for stability; omit to use `main` branch for the latest features
         event = "VeryLazy"
     },
-    'mfussenegger/nvim-lint'
+    'mfussenegger/nvim-lint',
+
+    -- IA COmpletions
+    --'github/copilot.vim'
+    -- {
+    --     "olimorris/codecompanion.nvim",
+    --     config = true,
+    --     dependencies = {
+    --         "nvim-lua/plenary.nvim",
+    --         "nvim-treesitter/nvim-treesitter",
+    --     },
+    -- },
+    'milanglacier/minuet-ai.nvim',
 }
 
 local opts = {}
