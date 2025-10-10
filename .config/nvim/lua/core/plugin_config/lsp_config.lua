@@ -6,6 +6,7 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protoc
 
 require("mason-lspconfig").setup({
     ensure_installed = {
+        -- 'vtsls',
         'ts_ls',
         'eslint',
         'html',
@@ -17,12 +18,14 @@ require("mason-lspconfig").setup({
     },
     handlers = {
         function(server, opts)
-            lspconfig[server].setup({})
+            lspconfig[server].setup({  })
         end,
         ['eslint'] = function()
             lspconfig.eslint.setup({
                 capabilities = capabilities,
+                -- workingDirectories ={mode= "auto"},
                 format = { enable = true },
+                experimental = { useFlatConfig = true },
                 autoFixOnSave = false,
                 codeActionsOnSave = {
                     mode = "all",
@@ -33,10 +36,45 @@ require("mason-lspconfig").setup({
                 },
             })
         end,
+        -- ['vtsls'] = function()
+        --     lspconfig.vtsls.setup({
+        --         capabilities=capabilities,
+        --         settings = {
+        --             typescript = {
+        --                 inlayHints = {
+        --                     parameterNames = { enabled = "literals" },
+        --                     parameterTypes = { enabled = true },
+        --                     variableTypes = { enabled = true },
+        --                     propertyDeclarationTypes = { enabled = true },
+        --                     functionLikeReturnTypes = { enabled = true },
+        --                     enumMemberValues = { enabled = true },
+        --                 }
+        --             },
+        --         }
+        --     })
+        -- end
         ['ts_ls'] = function()
             lspconfig.ts_ls.setup({
+                root_dir = lspconfig.util.root_pattern(
+                    "tsconfig.json", "package.json", ".git"
+                ),
                 capabilities = capabilities,
-                settings = {
+                init_options = {
+                    hostInfo = "neovim",
+                    preferences = {
+                        includeCompletionsForModuleExports           = true,
+                        includeCompletionsForImportStatements        = true,
+                        includeInlayParameterNameHints               = "all",
+                        includeInlayEnumMemberValueHints             = true,
+                        importModuleSpecifierPreference              = "relative",
+                    },
+                },
+                settings= {
+                    includeCompletionsForModuleExports           = true,
+                    includeCompletionsForImportStatements        = true,
+                    includeInlayParameterNameHints               = "all",
+                    includeInlayEnumMemberValueHints             = true,
+                    importModuleSpecifierPreference              = "relative",
                     typescript = {
                         inlayHints = {
                             includeInlayParameterNameHints = "literal",
@@ -52,7 +90,9 @@ require("mason-lspconfig").setup({
                         completeFunctionCalls = true
                     }
                 }
-            })
+
+
+                })
         end
     }
 })
