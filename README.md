@@ -11,7 +11,7 @@ git clone --depth 1 https://github.com/wbthomason/packer.nvim\
 For [`telescope.nvim` package](https://github.com/nvim-telescope/telescope.nvim), install [ripgrep](https://github.com/BurntSushi/ripgrep#installation)
 
 ```sh
-brew install ripgrep
+brew install ripgrep stylua
 ```
 
 Install `fd`
