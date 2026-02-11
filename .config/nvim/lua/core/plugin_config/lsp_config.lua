@@ -1,184 +1,133 @@
--- configuration https://nvimdev.github.io/lspsaga/
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-local lspconfig = require("lspconfig")
-
-local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
-
+-- Instalación automática con Mason
+require("mason").setup()
 require("mason-lspconfig").setup({
-    ensure_installed = {
-        'tsserver',
-        'eslint',
-        'html',
-        'diagnosticls',
-        'cssls',
-        'astro',
-        'solidity'
-    },
-    handlers = {
-        function(server, opts)
-            lspconfig[server].setup({})
-        end,
-        ['eslint'] = function()
-            lspconfig.eslint.setup({
-                capabilities = capabilities,
-                format = { enable = true },
-                autoFixOnSave = false,
-                codeActionsOnSave = {
-                    mode = "all",
-                    rules = { "!debugger", "!no-only-tests/*" },
-                },
-                lintTask = {
-                    enable = true,
-                },
-            })
-        end,
-        ['tsserver'] = function()
-            lspconfig.tsserver.setup({
-                capabilities = capabilities,
-                settings = {
-                    typescript = {
-                        inlayHints = {
-                            includeInlayParameterNameHints = "literal",
-                            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                            includeInlayFunctionParameterTypeHints = false,
-                            includeInlayVariableTypeHints = false,
-                            includeInlayPropertyDeclarationTypeHints = false,
-                            includeInlayFunctionLikeReturnTypeHints = true,
-                            includeInlayEnumMemberValueHints = true,
-                        },
-                    },
-                    completions = {
-                        completeFunctionCalls = true
-                    }
-                }
-            })
-        end
-    }
+	ensure_installed = {
+		"ts_ls",
+		"eslint",
+		"html",
+		"lua_ls",
+		"cssls",
+		"astro",
+		"solidity",
+		"pyright",
+		"tflint",
+	},
+	-- Esta parte handlers cambia completamente
+	handlers = {
+		function(server_name)
+			-- La magia: vim.lsp.config en lugar de lspconfig[server].setup
+			vim.lsp.config(server_name, {
+				capabilities = capabilities,
+			})
+			vim.lsp.enable(server_name)
+		end,
+		-- Handlers específicos siguen parecidos pero con sintaxis nueva
+		["eslint"] = function()
+			vim.lsp.config("eslint", {
+				capabilities = capabilities,
+				settings = {
+					format = { enable = true },
+					codeActionsOnSave = {
+						mode = "all",
+						rules = { "!debugger", "!no-only-tests/*" },
+					},
+				},
+			})
+			vim.lsp.enable("eslint")
+		end,
+		["ts_ls"] = function()
+			vim.lsp.config("ts_ls", {
+				capabilities = capabilities,
+				settings = {
+					typescript = {
+						inlayHints = {
+							includeInlayParameterNameHints = "literal",
+							includeInlayFunctionParameterTypeHints = false,
+							includeInlayFunctionLikeReturnTypeHints = true,
+						},
+					},
+				},
+			})
+			vim.lsp.enable("ts_ls")
+		end,
+		["lua_ls"] = function()
+			vim.lsp.config("lua_ls", {
+				capabilities = capabilities,
+				settings = {
+					Lua = {
+						diagnostics = { globals = { "vim" } },
+						workspace = {
+							library = {
+								vim.fn.expand("$VIMRUNTIME/lua"),
+								vim.fn.stdpath("config") .. "/lua",
+							},
+						},
+						telemetry = { enable = false },
+					},
+				},
+			})
+			vim.lsp.enable("lua_ls")
+		end,
+	},
 })
 
+vim.api.nvim_create_autocmd("LspAttach", {
+	group = vim.api.nvim_create_augroup("UserLspKeymaps", {}),
+	callback = function(ev)
+		local opts = { buffer = ev.buf, silent = true, noremap = true }
+		local map = function(mode, lhs, rhs, desc)
+			opts.desc = desc
+			vim.keymap.set(mode, lhs, rhs, opts)
+		end
+
+		-- Lo que antes era Lspsaga:
+
+		-- <Leader>gd: goto_definition
+		map("n", "<Leader>gd", vim.lsp.buf.definition, "Goto Definition")
+
+		-- <Leader>pd: "peek definition" – no existe nativo; alternativa simple:
+		map("n", "<Leader>pd", function()
+			vim.cmd("vsplit")
+			vim.lsp.buf.definition()
+		end, "Peek Definition (vsplit)")
+
+		-- <Leader>gr: finder -> references
+		map("n", "<Leader>gr", vim.lsp.buf.references, "References")
+
+		-- <Leader>lo: outline – no hay UI nativa “bonita”.
+		-- Puedes usar document_symbol, Telescope, o algún plugin tipo symbols-outline.
+		map("n", "<Leader>lo", vim.lsp.buf.document_symbol, "Document Symbols")
+
+		-- K: hover_doc
+		map("n", "K", vim.lsp.buf.hover, "Hover")
+
+		-- <leader>ca: code_action
+		map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code Action")
+
+		-- <leader>rn: rename
+		map("n", "<leader>rn", vim.lsp.buf.rename, "Rename")
+
+		-- <Leader>e: diagnostics floating
+		map("n", "<Leader>e", vim.diagnostic.open_float, "Line diagnostics")
+
+		-- <Leader>ge / <Leader>gp: next/prev diagnostic
+		map("n", "<Leader>ge", vim.diagnostic.goto_next, "Next diagnostic")
+		map("n", "<Leader>gp", vim.diagnostic.goto_prev, "Prev diagnostic")
+
+		-- <Leader>ke: setloclist con todos los diagnostics
+		map("n", "<Leader>ke", vim.diagnostic.setloclist, "Diagnostics loclist")
+	end,
+})
 
 vim.diagnostic.config({
-    underline = true,
-    update_in_insert = false,
-    virtual_text = false,
-    --virtual_text = {
-    --    spacing = 4,
-    --    source = "if_many",
-    --},
-    severity_sort = true,
-    float = {
-        format = function(diagnostic)
-          if diagnostic.source == 'eslint' then
-            return string.format(
-              '%s [%s]',
-              diagnostic.message,
-              -- shows the name of the rule
-              diagnostic.user_data.lsp.code
-            )
-          end
-          return string.format('%s [%s]', diagnostic.message, diagnostic.source)
-        end,
-        focusable = true,
-        style = "minimal",
-        border = "rounded",
-        source = "always",
-        header = "",
-        prefix = "",
-    },
+	underline = true,
+	update_in_insert = false,
+	virtual_text = true,
+	severity_sort = true,
 })
 
-require('lspsaga').setup({
-    lightbulb = {
-        sign = false,
-       -- autocmd = {
-       --     enabled = false
-       -- }
-    },
-    ui = {
-        code_action = "🤔",
-        -- border = 'none',
-    },
-    symbol_in_winbar = {
-        in_custom = false,
-        enable = true,
-        separator = ' ',
-        show_file = true,
-        file_formatter = ""
-    },
-})
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 
-local opts = { noremap= true, silent = true }
-
-vim.keymap.set("n", "<Leader>gd", "<cmd>Lspsaga goto_definition<CR>", opts)
-vim.keymap.set("n", "<Leader>pd", "<cmd>Lspsaga peek_definition<CR>", opts)
-vim.keymap.set("n", "<Leader>gr", "<cmd>Lspsaga finder<CR>", opts)
-vim.keymap.set("n", "<Leader>lo", "<cmd>Lspsaga outline<CR>", opts)
--- vim.keymap.set("n", "gd", "<cmd>Lspsaga lsp_finder<CR>", { silent = true })
-vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<cr>', opts)
--- vim.keymap.set('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', opts)
-vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts)
-vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts)
-vim.keymap.set('n', '<Leader>e', vim.diagnostic.open_float, opts)
-vim.keymap.set('n', '<Leader>ge', "<cmd>Lspsaga diagnostic_jump_next<CR>", opts)
-vim.keymap.set('n', '<Leader>gp', "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
-vim.keymap.set('n', '<Leader>ke', vim.diagnostic.setloclist, opts) -- https://www.reddit.com/r/neovim/comments/vkugqr/new_plugin_to_show_diagnostics_in_a_split_window/
-
-
-lspconfig.lua_ls.setup {
-    capabilities = capabilities,
-    settings = {
-        Lua = {
-            diagnostics = {
-                globals = { "vim" },
-            },
-            workspace = {
-                library = {
-                    [vim.fn.expand "$VIMRUNTIME/lua"] = true,
-                    [vim.fn.stdpath "config" .. "/lua"] = true,
-                },
-            },
-            telemetry = {
-                enable = false
-            }
-        },
-    }
-}
-
--- lspconfig.solargraph.setup {
---   capabilities = capabilities,
--- }
-
-lspconfig.pyright.setup {
-    capabilities = capabilities,
-}
-
-lspconfig.tflint.setup {
-    capabilities = capabilities,
-}
-
--- lspconfig.eslint.setup {
---     enable = false
--- }
--- lspconfig.tsserver.setup {
---     enable = false
--- }
-
-
-
--- review in the future, cpu 100% usage
--- i wrote console.log and cpu ->>>> rokcet
--- vim.lsp.handlers["textDocument/publishDiagnostics"] = function(...)
---     vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
---         underline = true,
---         update_in_insert = false,
---     })(...)
---     pcall(vim.diagnostic.setloclist, { open = false })
--- end
---
--- vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
---     border = vim.g.floating_window_border_dark,
--- })
---
--- vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
---     border = vim.g.floating_window_border_dark,
--- })
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })

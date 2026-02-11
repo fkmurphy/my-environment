@@ -1,40 +1,47 @@
-require('telescope').setup {
-    defaults = {
-        layout_strategy = "horizontal",
-        set_env = { COLORTERM = 'truecolor' },
-        file_ignore_patterns = {
-            'vendor',
-            'node_modules',
-        },
-        history = {
-            path = vim.fn.stdpath('data') .. '/databases/telescope_history.sqlite3',
-            limit = 100,
-        },
-    },
-    -- pickers = {
-    --     git_files = {
-    --         hidden = true,
-    --     },
-    --     live_grep = {
-    --         hidden = true,
-    --     },
-    -- },
-}
+require("telescope").setup({
+	defaults = {
+		layout_strategy = "horizontal",
+		set_env = { COLORTERM = "truecolor" },
+		file_ignore_patterns = {
+			"vendor",
+			"node_modules",
+		},
+		history = {
+			path = vim.fn.stdpath("data") .. "/databases/telescope_history.sqlite3",
+			limit = 100,
+		},
+	},
+	-- pickers = {
+	--     git_files = {
+	--         hidden = true,
+	--     },
+	--     live_grep = {
+	--         hidden = true,
+	--     },
+	-- },
+})
 -- require('telescope').load_extension('fzf')
 -- require('telescope').load_extension('lsp_handlers')
 -- require('telescope').load_extension('dap')
 -- require('telescope').load_extension('session-lens')
 -- require('telescope').load_extension('file_browser')
 
-local builtin = require('telescope.builtin')
+local builtin = require("telescope.builtin")
 
-vim.keymap.set('n', '<leader>f', builtin.find_files, {})
-vim.keymap.set('n', '<leader>b', builtin.buffers, {})
+vim.keymap.set("n", "<leader>f", builtin.find_files, {})
+vim.keymap.set("n", "<leader>b", builtin.buffers, {})
 -- vim.keymap.set('n', '<Space><Space>', builtin.oldfiles, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
 -- vim.keymap.set('n', '<Space>fh', builtin.help_tags, {})
 --
 
+-- pickers
+vim.keymap.set("n", "<leader>gr", builtin.lsp_references, { desc = "LSP References" })
+vim.keymap.set("n", "<leader>gd", builtin.lsp_definitions, { desc = "LSP Definitions" })
+vim.keymap.set("n", "<leader>lo", builtin.treesitter, { desc = "Document Symbols (Tree)" })
+vim.keymap.set("n", "<leader>ws", builtin.lsp_workspace_symbols, { desc = "Workspace Symbols" })
+vim.keymap.set("n", "<leader>gI", builtin.lsp_implementations, { desc = "LSP Implementations" })
+vim.keymap.set("n", "<leader>gt", builtin.lsp_type_definitions, { desc = "Type Definitions" })
 
 -- local TelescopePrompt = {
 --     TelescopePromptNormal = {
@@ -59,7 +66,6 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 -- for hl, col in pairs(TelescopePrompt) do
 --     vim.api.nvim_set_hl(0, hl, col)
 -- end
-
 
 -- config
 -- local highlights = {
