@@ -84,8 +84,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		-- Lo que antes era Lspsaga:
 
-		-- <Leader>gd: goto_definition
-		map("n", "<Leader>gd", vim.lsp.buf.definition, "Goto Definition")
+		-- <Leader>gd: goto_definition (COMENTADO - colisiona con Telescope)
+		-- map("n", "<Leader>gd", vim.lsp.buf.definition, "Goto Definition")
+		-- Usar Telescope: <leader>gd (builtin.lsp_definitions)
 
 		-- <Leader>pd: "peek definition" – no existe nativo; alternativa simple:
 		map("n", "<Leader>pd", function()
@@ -93,9 +94,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.lsp.buf.definition()
 		end, "Peek Definition (vsplit)")
 
-		-- <Leader>gr y gr: se definen en telescope.lua (builtin.lsp_references)
-		-- <Leader>lo: se define en telescope.lua (builtin.treesitter)
-		-- <Leader>gd: se define en telescope.lua (builtin.lsp_definitions)
+		-- NOTA: Estos se manejan desde Telescope:
+		-- <Leader>gr: builtin.lsp_references
+		-- gr: builtin.lsp_references
+		-- <Leader>lo: builtin.treesitter
+		-- <Leader>gd: builtin.lsp_definitions
+		-- <Leader>ws: builtin.lsp_workspace_symbols
+		-- <Leader>gI: builtin.lsp_implementations
+		-- <Leader>gt: builtin.lsp_type_definitions
 
 		-- K: hover_doc
 		map("n", "K", vim.lsp.buf.hover, "Hover")
