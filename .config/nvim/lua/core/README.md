@@ -29,6 +29,21 @@
 | `zm` | Close fold one level |
 | `zr` | Open fold one level |
 
+## NAVEGACIÓN ENTRE FUNCIONES (Treesitter Textobjects)
+
+| Keybinding | Descripción |
+|------------|-------------|
+| `]m` | Ir a la siguiente función (inicio) |
+| `[m` | Ir a la función anterior (inicio) |
+| `]M` | Ir al final de la siguiente función |
+| `[M` | Ir al final de la función anterior |
+| `]c` | Ir a la siguiente clase |
+| `[c` | Ir a la clase anterior |
+| `vif` | Seleccionar contenido interno de función |
+| `vaf` | Seleccionar toda la función (incluyendo declaración) |
+| `vic` | Seleccionar contenido interno de clase |
+| `vac` | Seleccionar toda la clase |
+
 ## AERIAL (Outline/Árbol de código)
 
 | Keybinding | Descripción |
@@ -70,6 +85,22 @@
 | `c` | Copy |
 | `p` | Paste |
 | `R` | Refresh |
+
+## SESSION MANAGER
+
+| Keybinding | Descripción |
+|------------|-------------|
+| `<leader>sl` | Load session (cargar sesión guardada) |
+| `<leader>ss` | Save session (guardar sesión actual) |
+| `<leader>sd` | Delete session (borrar sesión) |
+| `<leader>sf` | Load current dir session (cargar sesión del directorio actual) |
+| `<leader>ll` | Save session and quit (guardar y cerrar todo) |
+
+### Uso de Session Manager
+
+1. **Primera vez en un proyecto**: Abre los archivos/pestañas que quieras y ejecuta `<leader>ss` para guardar la sesión
+2. **Auto-carga**: La próxima vez que abras nvim en ese directorio, se restaurará automáticamente
+3. **Listar sesiones**: Usa `<leader>sl` para ver todas las sesiones guardadas y elegir una
 
 ## OTROS ÚTILES
 

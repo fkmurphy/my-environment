@@ -36,6 +36,13 @@ local plugins = {
 		priority = 1000,
 		opts = {},
 	},
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		lazy = false,
+		priority = 1000,
+		opts = {},
+	},
 
 	"nvim-neotest/nvim-nio",
 
@@ -51,6 +58,7 @@ local plugins = {
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 	},
+	"nvim-treesitter/nvim-treesitter-textobjects",
 	"vim-test/vim-test",
 
 	-- git decorations and use into the vim
@@ -112,6 +120,14 @@ local plugins = {
 		"NickvanDyke/opencode.nvim",
 		dependencies = {
 			{ "folke/snacks.nvim", opts = { input = {}, picker = {} } },
+		},
+	},
+
+	-- Session Manager
+	{
+		"Shatur/neovim-session-manager",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
 		},
 	},
 }
