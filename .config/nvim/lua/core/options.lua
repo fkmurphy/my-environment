@@ -40,5 +40,8 @@ endif
 
 vim.opt.swapfile = false
 
+-- Disable native <C-t> mapping (pop tag) to allow Telescope to use it
+vim.keymap.set("n", "<C-t>", "<Nop>")
+
 --Line numbers
 vim.wo.number = true

@@ -93,12 +93,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.lsp.buf.definition()
 		end, "Peek Definition (vsplit)")
 
-		-- <Leader>gr: finder -> references
-		map("n", "<Leader>gr", vim.lsp.buf.references, "References")
-
-		-- <Leader>lo: outline – no hay UI nativa “bonita”.
-		-- Puedes usar document_symbol, Telescope, o algún plugin tipo symbols-outline.
-		map("n", "<Leader>lo", vim.lsp.buf.document_symbol, "Document Symbols")
+		-- <Leader>gr y gr: se definen en telescope.lua (builtin.lsp_references)
+		-- <Leader>lo: se define en telescope.lua (builtin.treesitter)
+		-- <Leader>gd: se define en telescope.lua (builtin.lsp_definitions)
 
 		-- K: hover_doc
 		map("n", "K", vim.lsp.buf.hover, "Hover")

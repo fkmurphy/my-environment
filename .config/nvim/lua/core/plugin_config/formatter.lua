@@ -53,16 +53,16 @@ require("formatter").setup {
         }
       end
     },
-    typescript = { require('formatter.defaults.prettierd')},
-    javascript = { require('formatter.defaults.prettierd')},
-    json = { require('formatter.defaults.prettierd')},
-    css = { require('formatter.defaults.prettierd')},
-    scss = { require('formatter.defaults.prettierd')},
-    less = { require('formatter.defaults.prettierd')},
-    html = { require('formatter.defaults.prettierd')},
-    yaml = { require('formatter.defaults.prettierd')},
-    mjs = { require('formatter.defaults.prettierd')},
-    tsx = { require('formatter.defaults.prettierd')},
+    typescript = { require('formatter.filetypes.typescript').prettierd },
+    javascript = { require('formatter.filetypes.javascript').prettierd },
+    json = { require('formatter.filetypes.json').prettierd },
+    css = { require('formatter.filetypes.css').prettierd },
+    scss = { require('formatter.filetypes.css').prettierd },
+    less = { require('formatter.filetypes.css').prettierd },
+    html = { require('formatter.filetypes.html').prettierd },
+    yaml = { require('formatter.filetypes.yaml').prettierd },
+    mjs = { require('formatter.filetypes.javascript').prettierd },
+    tsx = { require('formatter.filetypes.typescriptreact').prettierd },
     -- njk = { require('formatter.default.djlint')},
 
     -- Use the special "*" filetype for defining formatter configurations on

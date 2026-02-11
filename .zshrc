@@ -21,14 +21,8 @@ setopt HIST_IGNORE_ALL_DUPS
 # Set editor default keymap to emacs (`-e`) or vi (`-v`)
 bindkey -e
 
-# Prompt for spelling correction of commands.
-#setopt CORRECT
-
-# Customize spelling correction prompt.
-#SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
-
 # Remove path separator from WORDCHARS.
-WORDCHARS=${WORDCHARS//[\/]}
+# WORDCHARS=${WORDCHARS//[\\/]}
 
 
 # --------------------
@@ -36,80 +30,51 @@ WORDCHARS=${WORDCHARS//[\/]}
 # --------------------
 
 #
-# completion
-#
-
-# Set a custom path for the completion dump file.
-# If none is provided, the default ${ZDOTDIR:-${HOME}}/.zcompdump is used.
-#zstyle ':zim:completion' dumpfile "${ZDOTDIR:-${HOME}}/.zcompdump-${ZSH_VERSION}"
-
-#
-# git
-#
-
-# Set a custom prefix for the generated aliases. The default prefix is 'G'.
-#zstyle ':zim:git' aliases-prefix 'g'
-
-#
-# input
-#
-
-# Append `../` to your input for each `.` you type after an initial `..`
-#zstyle ':zim:input' double-dot-expand yes
-
-#
-# termtitle
-#
-
-# Set a custom terminal title format using prompt expansion escape sequences.
-# See http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html#Simple-Prompt-Escapes
-# If none is provided, the default '%n@%m: %~' is used.
-#zstyle ':zim:termtitle' format '%1~'
-
-#
 # zsh-autosuggestions
 #
 
-# Customize the style that the suggestions are shown with.
-# See https://github.com/zsh-users/zsh-autosuggestions/blob/master/README.md#suggestion-highlight-style
-#ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
+# Disable automatic widget re-binding on each precmd.
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 
 #
 # zsh-syntax-highlighting
 #
 
-# Set what highlighters will be used.
-# See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
-
-# Customize the main highlighter styles.
-# See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/main.md#how-to-tweak-it
-#typeset -A ZSH_HIGHLIGHT_STYLES
-#ZSH_HIGHLIGHT_STYLES[comment]='fg=242'
 
 # ------------------
 # Initialize modules
 # ------------------
 
-if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
-  # Update static initialization script if it does not exist or it's outdated, before sourcing it
+ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
+
+# Download zimfw plugin manager if missing.
+if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
+  if (( ${+commands[curl]} )); then
+    curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh \
+        https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
+  else
+    mkdir -p ${ZIM_HOME} && wget -nv -O ${ZIM_HOME}/zimfw.zsh \
+        https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
+  fi
+fi
+
+# Install missing modules, and update ${ZIM_HOME}/init.zsh if missing or outdated.
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE:-${ZDOTDIR:-${HOME}}/.zimrc} ]]; then
   source ${ZIM_HOME}/zimfw.zsh init -q
 fi
+
+# Initialize modules (SOLO UNA VEZ)
 source ${ZIM_HOME}/init.zsh
 
 # ------------------------------
 # Post-init module configuration
 # ------------------------------
 
-#
 # zsh-history-substring-search
-#
-
-# Bind ^[[A/^[[B manually so up/down works both before and after zle-line-init
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-# Bind up and down keys
 zmodload -F zsh/terminfo +p:terminfo
 if [[ -n ${terminfo[kcuu1]} && -n ${terminfo[kcud1]} ]]; then
   bindkey ${terminfo[kcuu1]} history-substring-search-up
@@ -122,36 +87,69 @@ bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
 # }}} End configuration added by Zim install
 
+# ------------------
+# Personal aliases
+# ------------------
+
 alias code=$HOME/dev
 alias dkc=docker-compose
 alias dk=docker
 alias tmux='tmux -u'
-#INVOICE_SERVICE_GATEWAY_API_KEY=‘xxxxxxxxxx’
+alias lara="$HOME/dev/lara/docker/lara"
+alias claude-mem='~/.bun/bin/bun "~/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs\"'
+
+# ------------------
+# Environment variables
+# ------------------
+
 export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
 export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-
-source ~/.aliases
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Created by `pipx` on 2022-06-01 21:43:08
 export PATH="$PATH:$HOME/.local/bin"
-
-# Created by `pipx` on 2022-06-01 21:43:09
 export PATH="$PATH:/usr/local/bin"
-
 export PATH="$PATH:$HOME/.huff/bin"
 export PATH="/usr/local/opt/libpq/bin:$PATH"
 export PATH="/usr/local/opt/mysql-client/bin:/usr/local/opt/openssl@3/bin:$PATH"
+export GPG_TTY=$(tty)
+
+# ------------------
+# NVM
+# ------------------
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# ------------------
+# Pyenv
+# ------------------
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-export GPG_TTY=$(tty)
-#eval "$(pyenv init -)"
-#eval "$(pyenv virtualenv-init -)"
-#alias get_idf='. $HOME/dev/personal/esp32-wifi-penetration-tool/esp-idf/export.sh'
+
+# ------------------
+# Bun
+# ------------------
+
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+
+# ------------------
+# Opcodel
+# ------------------
+
+export PATH=$HOME/.opencode/bin:$PATH
+
+# ------------------
+# FZF
+# ------------------
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# ------------------
+# Custom aliases file
+# ------------------
+
+source ~/.aliases
