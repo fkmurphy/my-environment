@@ -1,3 +1,52 @@
+# My Environment Configuration
+
+This repository contains personalized environment configurations organized by purpose.
+
+## Directory Structure
+
+```
+my-environment/
+├── opencode-config/          # Global OpenCode configuration (private repo)
+│   ├── .git/
+│   ├── config.json
+│   ├── skills/
+│   └── README.md
+├── lara-env/                 # Lara microservices OpenCode config (private repo)
+│   ├── .git/
+│   ├── AGENTS.md
+│   ├── opencode.json
+│   ├── skills/
+│   └── README.md
+├── .config/nvim/             # Neovim configuration
+├── .zshenv
+├── .zshrc
+└── README.md                 # This file
+```
+
+## Repositories
+
+### opencode-config
+**GitHub**: https://github.com/fkmurphy/opencode-config (Private)
+
+Global OpenCode configuration with agents and skills. Symlinked to `~/.config/opencode`.
+
+Setup:
+```bash
+ln -s ~/my-environment/opencode-config ~/.config/opencode
+```
+
+### lara-env
+**GitHub**: https://github.com/fkmurphy/lara-env (Private)
+
+Lara-specific OpenCode configuration. Symlinked to `~/dev/lara/.opencode`.
+
+Setup:
+```bash
+ln -s ~/my-environment/lara-env ~/dev/lara/.opencode
+```
+
+---
+
 # Plugins nvim
 
 ## Packer.nvim
@@ -172,100 +221,20 @@ gpgconf --kill gpg-agent
 
 ---
 
-# Lara Microservices - OpenCode Configuration
+## Lara Configuration Setup
 
-Private OpenCode configuration for Lara microservices is now in a separate GitHub repository for better security and version control.
+See `lara-env/README.md` for detailed setup instructions.
 
-## Repository
-
-**GitHub**: https://github.com/fkmurphy/lara-env (Private)
-
-Contains:
-- Code style guide (backend + frontend)
-- OpenCode agents configuration
-- Lara workflows and procedures
-
-## Quick Start
-
-### 1. Clone the repository
-
-```bash
-git clone git@github.com:fkmurphy/lara-env.git ~/my-environment/lara-env
-```
-
-### 2. Create Symbolic Link
-
+Quick setup:
 ```bash
 ln -s ~/my-environment/lara-env ~/dev/lara/.opencode
 ```
 
-### 3. Verify Setup
+## OpenCode Configuration Setup
 
+See `opencode-config/README.md` for detailed setup instructions.
+
+Quick setup:
 ```bash
-cd ~/dev/lara
-ls -la .opencode/  # Should show AGENTS.md, opencode.json, skills/
+ln -s ~/my-environment/opencode-config ~/.config/opencode
 ```
-
-## Alternative: Using direnv
-
-### 1. Install direnv (macOS)
-
-```bash
-brew install direnv
-```
-
-### 2. Add direnv Hook to Shell
-
-Add to `~/.zshrc`:
-
-```bash
-eval "$(direnv hook zsh)"
-```
-
-Reload:
-
-```bash
-source ~/.zshrc
-```
-
-### 3. Create `.envrc` in Lara Directory
-
-```bash
-cd ~/dev/lara
-cat > .envrc << 'EOF'
-export OPENCODE_CONFIG_DIR=~/my-environment/lara-env
-EOF
-```
-
-### 4. Authorize
-
-```bash
-direnv allow ~/dev/lara
-```
-
-## Making Changes
-
-All configuration is versioned in the private GitHub repository:
-
-```bash
-cd ~/my-environment/lara-env
-git add .
-git commit -m "your message"
-git push
-```
-
-## What's Included
-
-- **opencode.json**: OpenCode agents (`lara-back`, `lara-front`)
-- **AGENTS.md**: Services, commands, Docker setup, database migrations
-- **skills/lara-code-style/SKILL.md**: Complete TypeScript code style (backend + frontend)
-
-## Troubleshooting
-
-**Symlink not working?**
-- Verify: `ls -la ~/dev/lara/.opencode`
-- Should point to: `~/my-environment/lara-env`
-
-**OpenCode not finding config?**
-- Check: `ls -la ~/dev/lara/.opencode/opencode.json`
-- Restart OpenCode session if cached
