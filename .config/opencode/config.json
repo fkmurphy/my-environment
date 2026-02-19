@@ -11,23 +11,24 @@
     }
   },
   "mcp": {
-    "jira": {
+    "context7": {
       "type": "local",
-      "command": ["npx", "-y", "@atlassian-dc-mcp/jira"],
-      "enabled": false,
-      "environment": {
-        "JIRA_HOST": "$JIRA_HOST",
-        "JIRA_EMAIL": "$JIRA_EMAIL",
-        "JIRA_API_TOKEN": "$JIRA_API_TOKEN"
-      }
-    }
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp",
+        "--api-key",
+        "{env:CONTEXT7_TOKEN}"
+      ],
+      "enabled": true
+    },
   },
   "permission": {
     "skill": {
       "*": "allow"
     }
   },
-   "keybinds": {
+  "keybinds": {
     "leader": "ctrl+space",
     "app_exit": "ctrl+c,ctrl+d,<leader>q",
     "editor_open": "<leader>e",
