@@ -1,0 +1,54 @@
+# Example .zshenv.local file
+# 
+# Copy this file to ~/.zshenv.local and fill in your values
+# This file is NOT tracked in git and should contain sensitive credentials
+#
+# Usage:
+#   cp ~/my-environment/zshenv.local.example ~/.zshenv.local
+#   chmod 600 ~/.zshenv.local
+#   # Edit ~/.zshenv.local with your actual values
+
+# ======================================
+# Azure OpenAI Configuration
+# ======================================
+# export AZURE_OPENAI_API_KEY="your-azure-api-key-here"
+# export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+# export AZURE_OPENAI_API_VERSION="2024-02-15-preview"
+
+# ======================================
+# LangSmith Configuration (tracing)
+# ======================================
+# export LANGSMITH_API_KEY="your-langsmith-api-key-here"
+# export LANGSMITH_PROJECT="your-project-name"
+
+# ======================================
+# Database Configuration
+# ======================================
+# export DATABASE_URL="postgres://user:password@localhost:5432/database_name"
+# export REDIS_URL="redis://localhost:6379"
+
+# ======================================
+# AWS/LocalStack Configuration
+# ======================================
+# export AWS_ACCESS_KEY_ID="test"
+# export AWS_SECRET_ACCESS_KEY="test"
+# export AWS_REGION="us-east-1"
+# export AWS_ENDPOINT_URL="http://localhost:4566"
+
+# ======================================
+# GitHub Configuration
+# ======================================
+# export GITHUB_TOKEN="your-github-token-here"
+# export GITHUB_USER="your-github-username"
+
+# ======================================
+# Local Development Configuration
+# ======================================
+# export NODE_ENV="development"
+# export DEBUG="*"
+# export LOG_LEVEL="debug"
+
+# ======================================
+# Custom Project Variables
+# ======================================
+# Add your project-specific variables here

@@ -64,6 +64,40 @@ git commit -m "your message"
 git push
 ```
 
+## Local Environment Variables
+
+Create `~/.zshenv.local` for sensitive or machine-specific variables that should NOT be versioned in git.
+
+### Setup
+
+1. Create the file:
+```bash
+touch ~/.zshenv.local
+chmod 600 ~/.zshenv.local
+```
+
+2. Add your variables:
+```bash
+# Example variables
+export AZURE_OPENAI_API_KEY="your-key-here"
+export LANGSMITH_API_KEY="your-key-here"
+export DATABASE_URL="postgres://..."
+export GITHUB_TOKEN="your-token-here"
+```
+
+The `~/.zshenv` in this repository automatically sources `~/.zshenv.local` if it exists.
+
+### Example `.zshenv.local`
+
+See `zshenv.local.example` in this repository for a template with common variables.
+
+### Important
+
+- Never commit `.zshenv.local` to git
+- Keep sensitive credentials in this file
+- Use `chmod 600` to restrict file permissions
+- Add to your `.gitignore_global` if you use it
+
 ---
 
 # Plugins nvim
