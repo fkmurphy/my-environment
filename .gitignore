@@ -2,3 +2,5 @@
 .config/yarn/global/node_modules
 .zshenv.local
 lara-env/
+opencode-config/
+lara-env/
