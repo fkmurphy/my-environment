@@ -174,9 +174,39 @@ gpgconf --kill gpg-agent
 
 # Lara Microservices - OpenCode Configuration
 
-Configuration for OpenCode agents and code style when working on Lara microservices.
+Private OpenCode configuration for Lara microservices is now in a separate GitHub repository for better security and version control.
+
+## Repository
+
+**GitHub**: https://github.com/fkmurphy/lara-opencode-config (Private)
+
+Contains:
+- Code style guide (backend + frontend)
+- OpenCode agents configuration
+- Lara workflows and procedures
 
 ## Quick Start
+
+### 1. Clone the repository
+
+```bash
+git clone git@github.com:fkmurphy/lara-opencode-config.git ~/my-environment/lara-opencode-config
+```
+
+### 2. Create Symbolic Link
+
+```bash
+ln -s ~/my-environment/lara-opencode-config ~/dev/lara/.opencode
+```
+
+### 3. Verify Setup
+
+```bash
+cd ~/dev/lara
+ls -la .opencode/  # Should show AGENTS.md, opencode.json, skills/
+```
+
+## Alternative: Using direnv
 
 ### 1. Install direnv (macOS)
 
@@ -186,13 +216,13 @@ brew install direnv
 
 ### 2. Add direnv Hook to Shell
 
-Add to `~/.zshrc` (or `~/.bash_profile` for bash):
+Add to `~/.zshrc`:
 
 ```bash
 eval "$(direnv hook zsh)"
 ```
 
-Reload shell:
+Reload:
 
 ```bash
 source ~/.zshrc
@@ -203,70 +233,39 @@ source ~/.zshrc
 ```bash
 cd ~/dev/lara
 cat > .envrc << 'EOF'
-export OPENCODE_CONFIG_DIR=~/my-environment/lara
+export OPENCODE_CONFIG_DIR=~/my-environment/lara-opencode-config
 EOF
 ```
 
-### 4. Authorize `.envrc`
+### 4. Authorize
 
 ```bash
 direnv allow ~/dev/lara
 ```
 
-### 5. Verify Setup
+## Making Changes
+
+All configuration is versioned in the private GitHub repository:
 
 ```bash
-cd ~/dev/lara
-echo $OPENCODE_CONFIG_DIR  # Should print: ~/my-environment/lara
-```
-
-## Alternative: Symbolic Link Setup
-
-If you prefer not to use direnv, you can use a symbolic link:
-
-```bash
-# Remove any existing .opencode
-rm -rf ~/dev/lara/.opencode
-
-# Create symlink
-ln -s ~/my-environment/lara ~/dev/lara/.opencode
-```
-
-## Directory Structure
-
-```
-my-environment/lara/
-├── .git/
-├── .gitignore
-├── AGENTS.md                      # Workflows and procedures
-├── opencode.json                  # OpenCode agents config
-└── skills/
-    └── lara-code-style/
-        └── SKILL.md               # Code style guide
+cd ~/my-environment/lara-opencode-config
+git add .
+git commit -m "your message"
+git push
 ```
 
 ## What's Included
 
-- **opencode.json**: Defines `lara-back` and `lara-front` agents
-- **AGENTS.md**: Services, commands, Docker setup, migrations
-- **skills/lara-code-style/SKILL.md**: Complete code style for TypeScript (backend + frontend)
-
-## Updating Configuration
-
-```bash
-cd ~/my-environment/lara
-git add .
-git commit -m "your message"
-git push origin main
-```
+- **opencode.json**: OpenCode agents (`lara-back`, `lara-front`)
+- **AGENTS.md**: Services, commands, Docker setup, database migrations
+- **skills/lara-code-style/SKILL.md**: Complete TypeScript code style (backend + frontend)
 
 ## Troubleshooting
 
-**direnv not working?**
-- Verify hook is in your shell config: `grep direnv ~/.zshrc`
-- Reload shell: `source ~/.zshrc`
-- Re-authorize: `direnv allow ~/dev/lara`
+**Symlink not working?**
+- Verify: `ls -la ~/dev/lara/.opencode`
+- Should point to: `~/my-environment/lara-opencode-config`
 
 **OpenCode not finding config?**
-- Check symlink/env var: `echo $OPENCODE_CONFIG_DIR` or `ls -la ~/dev/lara/.opencode`
-- Restart OpenCode session if configuration is cached
+- Check: `ls -la ~/dev/lara/.opencode/opencode.json`
+- Restart OpenCode session if cached
