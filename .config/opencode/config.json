@@ -22,6 +22,27 @@
       ],
       "enabled": true
     },
+    "postgres": {
+      "enabled": false,
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "--network",
+        "lara",
+        "-e",
+        "DATABASE_URI",
+        "-p",
+        "8000:8000",
+        "crystaldba/postgres-mcp",
+        "--access-mode=unrestricted"
+      ],
+      "environment": {
+        "DATABASE_URI": "{env:POSTGRES_LOCAL_URI}"
+      }
+    }
   },
   "permission": {
     "skill": {
