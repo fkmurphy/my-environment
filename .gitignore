@@ -1,4 +1,4 @@
 .DS_Store
 .config/yarn/global/node_modules
 .zshenv.local
-lara-opencode-config/
+lara-env/

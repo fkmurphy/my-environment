@@ -178,7 +178,7 @@ Private OpenCode configuration for Lara microservices is now in a separate GitHu
 
 ## Repository
 
-**GitHub**: https://github.com/fkmurphy/lara-opencode-config (Private)
+**GitHub**: https://github.com/fkmurphy/lara-env (Private)
 
 Contains:
 - Code style guide (backend + frontend)
@@ -190,13 +190,13 @@ Contains:
 ### 1. Clone the repository
 
 ```bash
-git clone git@github.com:fkmurphy/lara-opencode-config.git ~/my-environment/lara-opencode-config
+git clone git@github.com:fkmurphy/lara-env.git ~/my-environment/lara-env
 ```
 
 ### 2. Create Symbolic Link
 
 ```bash
-ln -s ~/my-environment/lara-opencode-config ~/dev/lara/.opencode
+ln -s ~/my-environment/lara-env ~/dev/lara/.opencode
 ```
 
 ### 3. Verify Setup
@@ -233,7 +233,7 @@ source ~/.zshrc
 ```bash
 cd ~/dev/lara
 cat > .envrc << 'EOF'
-export OPENCODE_CONFIG_DIR=~/my-environment/lara-opencode-config
+export OPENCODE_CONFIG_DIR=~/my-environment/lara-env
 EOF
 ```
 
@@ -248,7 +248,7 @@ direnv allow ~/dev/lara
 All configuration is versioned in the private GitHub repository:
 
 ```bash
-cd ~/my-environment/lara-opencode-config
+cd ~/my-environment/lara-env
 git add .
 git commit -m "your message"
 git push
@@ -264,7 +264,7 @@ git push
 
 **Symlink not working?**
 - Verify: `ls -la ~/dev/lara/.opencode`
-- Should point to: `~/my-environment/lara-opencode-config`
+- Should point to: `~/my-environment/lara-env`
 
 **OpenCode not finding config?**
 - Check: `ls -la ~/dev/lara/.opencode/opencode.json`
