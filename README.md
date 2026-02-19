@@ -169,3 +169,104 @@ Restart gpg-agent
 ```sh
 gpgconf --kill gpg-agent
 ```
+
+---
+
+# Lara Microservices - OpenCode Configuration
+
+Configuration for OpenCode agents and code style when working on Lara microservices.
+
+## Quick Start
+
+### 1. Install direnv (macOS)
+
+```bash
+brew install direnv
+```
+
+### 2. Add direnv Hook to Shell
+
+Add to `~/.zshrc` (or `~/.bash_profile` for bash):
+
+```bash
+eval "$(direnv hook zsh)"
+```
+
+Reload shell:
+
+```bash
+source ~/.zshrc
+```
+
+### 3. Create `.envrc` in Lara Directory
+
+```bash
+cd ~/dev/lara
+cat > .envrc << 'EOF'
+export OPENCODE_CONFIG_DIR=~/my-environment/lara
+EOF
+```
+
+### 4. Authorize `.envrc`
+
+```bash
+direnv allow ~/dev/lara
+```
+
+### 5. Verify Setup
+
+```bash
+cd ~/dev/lara
+echo $OPENCODE_CONFIG_DIR  # Should print: ~/my-environment/lara
+```
+
+## Alternative: Symbolic Link Setup
+
+If you prefer not to use direnv, you can use a symbolic link:
+
+```bash
+# Remove any existing .opencode
+rm -rf ~/dev/lara/.opencode
+
+# Create symlink
+ln -s ~/my-environment/lara ~/dev/lara/.opencode
+```
+
+## Directory Structure
+
+```
+my-environment/lara/
+├── .git/
+├── .gitignore
+├── AGENTS.md                      # Workflows and procedures
+├── opencode.json                  # OpenCode agents config
+└── skills/
+    └── lara-code-style/
+        └── SKILL.md               # Code style guide
+```
+
+## What's Included
+
+- **opencode.json**: Defines `lara-back` and `lara-front` agents
+- **AGENTS.md**: Services, commands, Docker setup, migrations
+- **skills/lara-code-style/SKILL.md**: Complete code style for TypeScript (backend + frontend)
+
+## Updating Configuration
+
+```bash
+cd ~/my-environment/lara
+git add .
+git commit -m "your message"
+git push origin main
+```
+
+## Troubleshooting
+
+**direnv not working?**
+- Verify hook is in your shell config: `grep direnv ~/.zshrc`
+- Reload shell: `source ~/.zshrc`
+- Re-authorize: `direnv allow ~/dev/lara`
+
+**OpenCode not finding config?**
+- Check symlink/env var: `echo $OPENCODE_CONFIG_DIR` or `ls -la ~/dev/lara/.opencode`
+- Restart OpenCode session if configuration is cached

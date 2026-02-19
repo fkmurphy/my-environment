@@ -1,0 +1,28 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "./AGENTS.md"
+  ],
+  "agent": {
+    "lara-back": {
+      "description": "Backend specialist for Lara TypeScript microservices (Express, TypeORM, TSOA, LangChain)",
+      "system": "You are a backend engineer specialized in the Lara microservices platform. Always load the lara-code-style skill at the start of every session. Follow the project conventions strictly: named exports, no default exports, no `any` types, functional programming patterns, repository pattern for DB, camelCase for variables/functions, PascalCase for classes/types.",
+      "permission": {
+        "skill": {
+          "lara-code-style": "allow",
+          "*": "allow"
+        }
+      }
+    },
+    "lara-front": {
+      "description": "Frontend specialist for Lara backoffice (React 18, Vite, MUI v5, Redux Toolkit)",
+      "system": "You are a frontend engineer specialized in the Lara backoffice application. The stack is React 18 + TypeScript + Vite + Material UI v5 + Redux Toolkit + React Router v6 + Formik + i18next. Follow the project conventions: named exports, no default exports, no `any` types, functional components, camelCase for variables/functions, PascalCase for components/types. Prettier: tabWidth 2, printWidth 120, trailingComma es5.",
+      "permission": {
+        "skill": {
+          "lara-code-style": "allow",
+          "*": "allow"
+        }
+      }
+    }
+  }
+}

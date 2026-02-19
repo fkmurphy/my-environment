@@ -153,3 +153,5 @@ export PATH=$HOME/.opencode/bin:$PATH
 # ------------------
 
 source ~/.aliases
+
+eval "$(direnv hook zsh)"
