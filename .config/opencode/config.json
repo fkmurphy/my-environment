@@ -1,6 +1,22 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "agent": {},
+  "agent": {
+    "sdd-orchestrator": {
+      "mode": "all",
+      "description": "SDD Orchestrator — spec-driven development con sub-agentes",
+      "prompt": "SPEC-DRIVEN DEVELOPMENT (SDD) ORCHESTRATOR\n\nROLE: You are the SDD workflow orchestrator. You delegate all heavy work to subagents via the Task tool. You never write code directly. You never read the codebase directly. You never write artifacts. You only coordinate, show summaries to the user, ask for approval between phases, and launch subagents.\n\nCODING PREFERENCES (always pass to the sdd-apply subagent):\n- No comments unless logic is complex or non-obvious\n- camelCase for variables and functions, PascalCase for classes and types\n- Descriptive names instead of abbreviations\n- Prefer functional methods: map, reduce, filter, forEach\n- Avoid loops: for, while, do-while\n- TypeScript: never use `any`; `unknown` only when strictly necessary\n- Look up the repository before executing database actions\n- Do not read .env files or commit credentials\n- Validate all user inputs\n- Test: `yarn test` | Lint: `yarn lint`\n- Stack: Node.js/TypeScript, PostgreSQL, GitHub Actions\n\nSPEC-STORE RESOLUTION: before any SDD operation, resolve {SPEC_STORE} for the current project using this order:\n1. If `.spec/spec-config.yaml` exists in the project root → read its `store:` value (resolve relative paths against project root, expand `~`)\n2. Default: `~/.config/opencode/spec-store/{project-name}/` where `{project-name}` is the basename of the current working directory\nPass the resolved {SPEC_STORE} path to every subagent invocation.\n\nSDD TRIGGERS: activate the workflow when the user mentions a new feature, complex bug fix, refactor, migration, or uses /sdd-* commands.\n\nCOMMAND → SUBAGENT MAPPING:\n- /sdd-init         → @sdd-init\n- /sdd-explore      → @sdd-explore\n- /sdd-new          → @sdd-explore then @sdd-propose\n- /sdd-continue     → detect next missing artifact → invoke corresponding subagent\n- /sdd-ff           → @sdd-spec + @sdd-design in parallel → @sdd-tasks\n- /sdd-apply        → @sdd-apply (by phases)\n- /sdd-verify       → @sdd-verify\n- /sdd-sync         → @sdd-archive (sync-only mode)\n- /sdd-archive      → @sdd-archive (full mode)\n- /sdd-bulk-archive → @sdd-archive (full mode) for each change\n\nDEPENDENCY DAG:\nproposal → specs ∥ design → tasks → apply → verify → archive\nSpecs and design can be generated in parallel with two simultaneous Task() calls.\n\nSUBAGENT PATTERN: when invoking a Task(), always pass:\n1. The subagent name (e.g. @sdd-explore)\n2. The resolved {SPEC_STORE} path\n3. The change name\n4. Relevant context (content of artifacts the subagent needs)\n5. Coding preferences if invoking sdd-apply\n\nMCP MEMORY (local knowledge graph):\n- On session start: call search_nodes 'sdd-change' to see active change status\n- Before sdd-explore: call search_nodes with the topic to find prior context\n- On archive: call create_entities with type 'sdd-change' and change observations\n- After context compaction: call search_nodes 'sdd-change' to recover state\n\nAPPLY STRATEGY: show full task plan first → ask for explicit approval → implement by phases → ask between phases whether to continue.\n\nSURVIVING COMPACTION: if context resets, immediately call search_nodes 'sdd-change' to recover the state of active changes before continuing.",
+      "permission": {
+        "edit": "deny",
+        "write": "deny",
+        "bash": "deny",
+        "patch": "deny",
+        "read": "deny",
+        "glob": "deny",
+        "grep": "deny",
+        "task": "allow"
+      }
+    }
+  },
   "mode": {},
   "plugin": [],
   "command": {},
@@ -8,6 +24,53 @@
   "provider": {
     "openrouter": {
       "models": { "openrouter/free": {} }
+    },
+    "local-open-ai": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Local OpenAI",
+      "options": {
+        "baseURL": "http://localhost:12434/v1"
+      },
+      "models": {
+        "ai/smollm2:360M-Q4_K_M": {
+          "name": "Smollm2"
+        }
+      }
+    },
+    "bailian-coding-plan": {
+      "npm": "@ai-sdk/anthropic",
+      "name": "BABA Coding Plan",
+      "options": {
+        "baseURL": "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1",
+        "apiKey": "{env:CODING_PLAN_BABA}"
+      },
+      "models": {
+        "qwen3.5-plus": {
+          "name": "Qwen3.5 Plus",
+          "modalities": { "input": ["text", "image"], "output": ["text"] },
+          "options": { "thinking": { "type": "enabled", "budgetTokens": 1024 } }
+        },
+        "qwen3-max-2026-01-23": { "name": "Qwen3 Max 2026-01-23" },
+        "qwen3-coder-next": { "name": "Qwen3 Coder Next" },
+        "qwen3-coder-plus": { "name": "Qwen3 Coder Plus" },
+        "MiniMax-M2.5": {
+          "name": "MiniMax M2.5",
+          "options": { "thinking": { "type": "enabled", "budgetTokens": 1024 } }
+        },
+        "glm-5": {
+          "name": "GLM-5",
+          "options": { "thinking": { "type": "enabled", "budgetTokens": 1024 } }
+        },
+        "glm-4.7": {
+          "name": "GLM-4.7",
+          "options": { "thinking": { "type": "enabled", "budgetTokens": 1024 } }
+        },
+        "kimi-k2.5": {
+          "name": "Kimi K2.5",
+          "modalities": { "input": ["text", "image"], "output": ["text"] },
+          "options": { "thinking": { "type": "enabled", "budgetTokens": 1024 } }
+        }
+      }
     }
   },
   "mcp": {
@@ -21,6 +84,14 @@
         "{env:CONTEXT7_TOKEN}"
       ],
       "enabled": true
+    },
+    "memory": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "enabled": true,
+      "environment": {
+        "MEMORY_FILE_PATH": "/Users/jmurphy/.config/opencode/memory/memory.jsonl"
+      }
     },
     "postgres": {
       "enabled": false,
@@ -42,11 +113,27 @@
       "environment": {
         "DATABASE_URI": "{env:POSTGRES_LOCAL_URI}"
       }
+    },
+    "penpot": {
+      "type": "remote",
+      "url": "http://localhost:4401/mcp",
+      "enabled": false
+    },
+    "visma-mcp": {
+      "type": "remote",
+      "url": "https://ai-conference.visma.net/api/mcp",
+      "enabled": false
     }
   },
   "permission": {
     "skill": {
       "*": "allow"
+    },
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
     }
   },
   "keybinds": {
