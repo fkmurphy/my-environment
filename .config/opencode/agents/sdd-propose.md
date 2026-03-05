@@ -1,6 +1,6 @@
 ---
-description: Creates proposal.md for a SDD change with motivation, scope, approach and rollback plan
+description: Create or update proposal.md for a change
 mode: subagent
 hidden: true
 ---
-Read and follow the instructions in ~/.config/opencode/skills/sdd-propose/SKILL.md exactly.
+Read skill at `~/.config/opencode/skills/sdd-propose/SKILL.md`

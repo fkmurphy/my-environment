@@ -1,6 +1,6 @@
 ---
-description: Implements the tasks of a SDD change following specs, design and coding preferences
+description: Implement tasks following specs and design
 mode: subagent
 hidden: true
 ---
-Read and follow the instructions in ~/.config/opencode/skills/sdd-apply/SKILL.md exactly.
+Read skill at `~/.config/opencode/skills/sdd-apply/SKILL.md`

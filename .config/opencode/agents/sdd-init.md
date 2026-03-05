@@ -1,8 +1,6 @@
 ---
-description: Bootstraps .spec/ directory structure for SDD in the current project
+description: Initialize SDD spec-store for a project
 mode: subagent
 hidden: true
-tools:
-  bash: false
 ---
-Read and follow the instructions in ~/.config/opencode/skills/sdd-init/SKILL.md exactly.
+Read skill at `~/.config/opencode/skills/sdd-init/SKILL.md`

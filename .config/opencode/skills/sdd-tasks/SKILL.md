@@ -1,150 +1,104 @@
 ---
 name: sdd-tasks
 description: >
-  Create tasks.md with a phase-organized implementation checklist.
-  Trigger: when the orchestrator launches this subagent to create the tasks.
+  Create tasks.md with phase-organized checklist.
+  Trigger: when orchestrator launches this subagent.
 ---
 
-## Purpose
+# Task Planner
 
-You are the subagent responsible for the TASK BREAKDOWN. You take the proposal,
-specs and design, and produce a `tasks.md` with concrete, actionable steps.
+## Shared Conventions
 
-## Resolving {SPEC_STORE}
+Read first: `_shared/persistence-contract.md`, `_shared/spec-store-resolution.md`, `_shared/subagent-contract.md`, `_shared/coding-standards.md`
 
-Before doing anything, resolve the spec-store path for this project:
+## What you receive
 
-1. Check if `.spec/spec-config.yaml` exists in the project root
-2. If it exists, read the `store:` value → that is `{SPEC_STORE}`
-3. If it does not exist, use `~/.config/opencode/spec-store/{project-name}/`
-   where `{project-name}` is the name of the current working directory
-
-All artifact paths below use `{SPEC_STORE}` as the root.
-
-## What you receive from the orchestrator
-
+- `{SPEC_STORE}` — resolved
+- `persistence_mode` — `mcp-memory` (default) | `filesystem` | `none`
 - Change name
-- Content of `proposal.md`, `specs/`, `design.md`
-- Project context from `{SPEC_STORE}/config.yaml`
-- User feedback on existing tasks — on revision runs
+- Proposal, specs, design content | User feedback (revision)
 
 ## What to do
 
-### Step 0: Check if tasks already exist
+### Step 1: Check existence
 
-Check if `{SPEC_STORE}/changes/{name}/tasks.md` already exists.
+- NOT exists → first run
+- EXISTS → revision, apply feedback only
 
-- **If it does NOT exist** → this is a first run. Proceed normally.
-- **If it DOES exist** → this is a revision run. Read the existing tasks first,
-  then apply the user's feedback as targeted changes (add, remove, reorder, or
-  reword specific tasks). Preserve tasks not mentioned in the feedback as-is.
-  Do NOT regenerate the entire list from scratch.
+### Step 2: Analyze design
 
-### Step 1: Analyze the design
+Identify files, dependency order, testing requirements.
 
-From the design, identify:
-- All files to create/modify/delete in dependency order
-- What must exist before what (dependencies-first ordering)
-- Testing requirements per component
-
-### Step 2: Write `tasks.md`
+### Step 3: Write tasks
 
 ```markdown
-# Tasks: {Change title}
+# Tasks: {Title}
 
-## Phase 1: {Name} (e.g. Foundation / Infrastructure)
+## Phase 1: Foundation
 
-- [ ] 1.1 {Concrete action — which file, what change}
+- [ ] 1.1 {Concrete action — file, what}
 - [ ] 1.2 {Concrete action}
-- [ ] 1.3 {Concrete action}
 
-## Phase 2: {Name} (e.g. Core Implementation)
+## Phase 2: Core
 
 - [ ] 2.1 {Concrete action}
-- [ ] 2.2 {Concrete action}
 
-## Phase 3: {Name} (e.g. Integration / Wiring)
+## Phase 3: Integration
 
 - [ ] 3.1 {Concrete action}
-- [ ] 3.2 {Concrete action}
 
 ## Phase 4: Testing
 
-- [ ] 4.1 {Write tests for ...}
-- [ ] 4.2 {Verify scenario: "GIVEN ... WHEN ... THEN ..."}
-- [ ] 4.3 Run `yarn test` and verify it passes
-- [ ] 4.4 Run `yarn lint` and verify no errors
+- [ ] 4.1 {Write tests for...}
+- [ ] 4.2 Verify scenario: "GIVEN... WHEN... THEN..."
+- [ ] 4.3 Run `yarn test`
+- [ ] 4.4 Run `yarn lint`
 
-## Phase 5: Cleanup (if applicable)
+## Phase 5: Cleanup (optional)
 
-- [ ] 5.1 {Remove temporary code}
-- [ ] 5.2 {Update documentation if needed}
+- [ ] 5.1 {Remove temp code}
 ```
 
-Save the file at `{SPEC_STORE}/changes/{name}/tasks.md`.
+### Phase Guide
 
-### Task criteria
+| Phase | Contains |
+|-------|----------|
+| 1. Foundation | Types, DB, config |
+| 2. Core | Main logic |
+| 3. Integration | Wiring, routes |
+| 4. Testing | Tests, verify |
+| 5. Cleanup | Polish |
 
-Each task MUST be:
+### Task Criteria
 
-| Criterion | Correct example | Incorrect example |
-|---|---|---|
-| **Specific** | "Create `src/auth/middleware.ts` with JWT validation" | "Add auth" |
-| **Actionable** | "Add `validateToken()` method to `AuthService`" | "Handle tokens" |
-| **Verifiable** | "Test: `POST /login` returns 401 without token" | "Make sure it works" |
-| **Small** | One file or one logical unit of work | "Implement the feature" |
+| Criterion | Correct | Incorrect |
+|-----------|---------|-----------|
+| Specific | "Create `auth.ts` with JWT" | "Add auth" |
+| Actionable | "Add `validateToken()`" | "Handle tokens" |
+| Verifiable | "Test: POST /login 401" | "Make it work" |
+| Small | One file/unit | "Implement feature" |
 
-### Phase guide
+### Step 4: Persist
 
-```
-Phase 1: Foundation / Infrastructure
-  → New types, interfaces, DB changes, config
-  → Things other tasks depend on
+**mcp-memory**: `create_entities({ name: "sdd-{change}-tasks", entityType: "sdd-artifact", observations: [...] })`
 
-Phase 2: Core Implementation
-  → Main logic, business rules
-  → The bulk of the change
+**filesystem**: `{SPEC_STORE}/changes/{change}/tasks.md`
 
-Phase 3: Integration / Wiring
-  → Connect components, routes, UI wiring
-  → Make everything work together
+### Step 5: Return
 
-Phase 4: Testing
-  → Unit, integration, e2e tests
-  → Verify against spec scenarios
-
-Phase 5: Cleanup (optional)
-  → Remove temporary code, polish
-```
-
-### Step 3: Return summary to the orchestrator
-
-```markdown
-## Tasks created
-
-**Change**: {name}
-**File**: {SPEC_STORE}/changes/{name}/tasks.md
-
-| Phase | Tasks | Focus |
-|---|---|---|
-| Phase 1 | {N} | {name} |
-| Phase 2 | {N} | {name} |
-| Phase 3 | {N} | {name} |
-| Phase 4 | {N} | Testing |
-| **Total** | **{N}** | |
-
-### Implementation order
-{Brief description of recommended order and why}
-
-### Next step
-Ready for `/sdd-apply`.
+```json
+{
+  "status": "ok",
+  "summary": "Created {N} tasks in {M} phases",
+  "artifacts": [{"name": "tasks", "mode": "...", "ref": "..."}],
+  "next_recommended": ["apply"]
+}
 ```
 
 ## Rules
 
-- ALWAYS reference concrete file paths in tasks
-- Tasks MUST be ordered by dependency — Phase 1 cannot depend on Phase 4
-- Testing tasks must reference specific scenarios from the specs
-- Each task must be completable in ONE work session
-- NEVER use vague tasks like "implement feature" or "add tests"
-- Phase 4 testing ALWAYS includes `yarn test` and `yarn lint`
+- Concrete file paths
+- Dependency order
+- Testing tasks reference spec scenarios
+- Each task = one session
+- Phase 4: ALWAYS `yarn test` + `yarn lint`

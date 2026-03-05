@@ -1,8 +1,6 @@
 ---
-description: Creates tasks.md with a phase-organized implementation checklist for a SDD change
+description: Create tasks.md with phase-organized checklist
 mode: subagent
 hidden: true
-tools:
-  bash: false
 ---
-Read and follow the instructions in ~/.config/opencode/skills/sdd-tasks/SKILL.md exactly.
+Read skill at `~/.config/opencode/skills/sdd-tasks/SKILL.md`

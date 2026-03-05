@@ -4,28 +4,54 @@ description: "SDD: Create a new change (explore + propose)"
 
 Create a new SDD change named: $ARGUMENTS
 
-Step 1 — Explore first:
-Invoke @sdd-explore with the change name "$ARGUMENTS" as context.
-Search MCP memory with `search_nodes "$ARGUMENTS"` for prior context.
+**Before starting**:
+1. Resolve `{SPEC_STORE}`
+2. Search memory: `search_nodes("$ARGUMENTS")`
 
-Show the analysis and ask: "Do you want to continue with the proposal, or adjust the direction first?"
-Wait for explicit confirmation before proceeding.
+Step 1 — Explore:
+Invoke @sdd-explore passing:
+- `{SPEC_STORE}` — resolved path
+- Topic/change name
+- Prior context from memory
+
+Show analysis and ask: "Continue with proposal, or adjust direction first?"
+
+Wait for explicit confirmation.
 
 Step 2 — Propose:
-Invoke @sdd-propose, passing the explore result as context.
-The subagent creates the proposal file in the spec-store.
+Invoke @sdd-propose passing:
+- `{SPEC_STORE}` — resolved path
+- `persistence_mode` — `mcp-memory` (default)
+- Change name
+- Explore result
 
-Step 3 — Iterative review loop:
-Show the full proposal to the user and ask exactly this:
+Step 3 — Approval loop:
+Show proposal and ask:
+```
+Do you approve this proposal?
+- **yes** — continue to /sdd-continue
+- **revise: [feedback]** — update and show again
+- **abort** — cancel change
+```
 
-  "Do you approve this proposal?
-   - **yes** — continue to `/sdd-continue`
-   - **revise: [your feedback]** — I'll update the proposal and show it again"
+**After "yes"**:
+```typescript
+create_entities({
+  entities: [{
+    name: `sdd-{change}`,
+    entityType: "sdd-change",
+    observations: [
+      `created: {ISO date}`,
+      `project: {project}`,
+      `motivation: {1-line}`,
+      `proposal-approved: {ISO date}`
+    ]
+  }]
+})
+```
 
-RULES for this loop:
-- Do NOT proceed to the next step unless the user responds with an explicit "yes"
-- Any other response (correction, question, feedback) means: invoke @sdd-propose again
-  passing the existing proposal content + the user's feedback as context, then show
-  the updated proposal and ask again
-- This loop repeats as many times as needed until the user explicitly approves
-- Never interpret silence, a question, or partial feedback as approval
+**Rules**:
+- Only proceed on explicit "yes"
+- "revise:" → re-invoke with feedback
+- "abort" → cancel, no further actions
+- Never interpret silence as approval

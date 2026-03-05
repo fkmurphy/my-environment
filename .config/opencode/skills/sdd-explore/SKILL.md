@@ -1,82 +1,77 @@
 ---
 name: sdd-explore
 description: >
-  Explore a codebase topic and compare implementation options.
-  Trigger: when the orchestrator launches this subagent for prior exploration.
+  Explore codebase topic and compare options. No files created.
+  Trigger: when orchestrator launches this subagent.
 ---
 
-## Purpose
+# Explorer
 
-You are the subagent responsible for EXPLORATION. You analyze the codebase and
-compare implementation options for a given topic. You do not create any files.
+## Shared Conventions
 
-## What you receive from the orchestrator
+Read first: `_shared/persistence-contract.md`, `_shared/spec-store-resolution.md`, `_shared/subagent-contract.md`
 
-- `{SPEC_STORE}` — resolved absolute path to this project's spec-store
-- Topic or change name to explore
-- Prior context (if the orchestrator found anything in MCP memory)
+## What you receive
+
+- `{SPEC_STORE}` — resolved
+- Topic or change name
+- Prior context from memory (if any)
 
 ## What to do
 
-### Step 1: Search MCP memory
+### Step 1: Search memory
 
-Use `search_nodes` with the received topic to find relevant prior decisions.
-If there are results, include them in your analysis as "Prior context".
+```typescript
+search_nodes({ query: topic })
+```
 
-### Step 2: Analyze the codebase
+Include results as "Prior context".
 
-Explore files relevant to the topic:
-- Modules and files that could be affected
-- Existing patterns in the project that the implementation should follow
-- Current dependencies that could be useful or conflicting
-- Existing tests in the affected area
-- Relevant configurations (env vars, feature flags, etc.)
+### Step 2: Analyze codebase
 
-Read `{SPEC_STORE}/specs/` if it exists — understand the current documented state of the system.
+Explore:
+- Affected modules/files
+- Existing patterns
+- Dependencies
+- Tests
+- Configurations
+
+Read `{SPEC_STORE}/specs/` if exists.
 
 ### Step 3: Compare options
 
-For the given topic, present 2-3 possible approaches:
+Present 2-3 approaches:
 
 ```markdown
 ### Option A: {name}
 - Approach: {description}
 - Pros: {list}
 - Cons: {list}
-- Estimated effort: {low/medium/high}
+- Effort: {low/medium/high}
 - Risk: {low/medium/high}
 
 ### Option B: {name}
 ...
 
 ### Recommendation
-{Which one and why, considering the project context}
+{Which and why}
 ```
 
-### Step 4: Return analysis to the orchestrator
+### Step 4: Return
 
-```markdown
-## Exploration: {topic}
-
-### Prior context (MCP memory)
-{search_nodes results or "No prior results"}
-
-### Relevant files
-{List of files likely to be affected}
-
-### Options analysis
-{Options A, B, C with pros/cons}
-
-### Recommendation
-{Recommended option and rationale}
-
-### Risks to consider
-{List of identified risks}
+```json
+{
+  "status": "ok",
+  "summary": "Explored {topic}: {N} options, recommends {option}",
+  "artifacts": [],
+  "next_recommended": ["propose"],
+  "risks": ["{list}"]
+}
 ```
 
 ## Rules
 
-- NEVER create or modify files
-- Base your analysis on the real project code, not assumptions
-- If the topic is ambiguous, explore the most likely area and clarify it in the report
-- Always include the MCP memory search before analyzing
+- NEVER create/modify files
+- Base on real code, not assumptions
+- Clarify ambiguous topics
+- ALWAYS search memory first

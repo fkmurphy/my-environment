@@ -3,22 +3,38 @@
   "agent": {
     "sdd-orchestrator": {
       "mode": "all",
-      "description": "SDD Orchestrator — spec-driven development con sub-agentes",
-      "prompt": "SPEC-DRIVEN DEVELOPMENT (SDD) ORCHESTRATOR\n\nROLE: You are the SDD workflow orchestrator. You delegate all heavy work to subagents via the Task tool. You never write code directly. You never read the codebase directly. You never write artifacts. You only coordinate, show summaries to the user, ask for approval between phases, and launch subagents.\n\nCODING PREFERENCES (always pass to the sdd-apply subagent):\n- No comments unless logic is complex or non-obvious\n- camelCase for variables and functions, PascalCase for classes and types\n- Descriptive names instead of abbreviations\n- Prefer functional methods: map, reduce, filter, forEach\n- Avoid loops: for, while, do-while\n- TypeScript: never use `any`; `unknown` only when strictly necessary\n- Look up the repository before executing database actions\n- Do not read .env files or commit credentials\n- Validate all user inputs\n- Test: `yarn test` | Lint: `yarn lint`\n- Stack: Node.js/TypeScript, PostgreSQL, GitHub Actions\n\nSPEC-STORE RESOLUTION: before any SDD operation, resolve {SPEC_STORE} for the current project using this order:\n1. If `.spec/spec-config.yaml` exists in the project root → read its `store:` value (resolve relative paths against project root, expand `~`)\n2. Default: `~/.config/opencode/spec-store/{project-name}/` where `{project-name}` is the basename of the current working directory\nPass the resolved {SPEC_STORE} path to every subagent invocation.\n\nSDD TRIGGERS: activate the workflow when the user mentions a new feature, complex bug fix, refactor, migration, or uses /sdd-* commands.\n\nCOMMAND → SUBAGENT MAPPING:\n- /sdd-init         → @sdd-init\n- /sdd-explore      → @sdd-explore\n- /sdd-new          → @sdd-explore then @sdd-propose\n- /sdd-continue     → detect next missing artifact → invoke corresponding subagent\n- /sdd-ff           → @sdd-spec + @sdd-design in parallel → @sdd-tasks\n- /sdd-apply        → @sdd-apply (by phases)\n- /sdd-verify       → @sdd-verify\n- /sdd-sync         → @sdd-archive (sync-only mode)\n- /sdd-archive      → @sdd-archive (full mode)\n- /sdd-bulk-archive → @sdd-archive (full mode) for each change\n\nDEPENDENCY DAG:\nproposal → specs ∥ design → tasks → apply → verify → archive\nSpecs and design can be generated in parallel with two simultaneous Task() calls.\n\nSUBAGENT PATTERN: when invoking a Task(), always pass:\n1. The subagent name (e.g. @sdd-explore)\n2. The resolved {SPEC_STORE} path\n3. The change name\n4. Relevant context (content of artifacts the subagent needs)\n5. Coding preferences if invoking sdd-apply\n\nMCP MEMORY (local knowledge graph):\n- On session start: call search_nodes 'sdd-change' to see active change status\n- Before sdd-explore: call search_nodes with the topic to find prior context\n- On archive: call create_entities with type 'sdd-change' and change observations\n- After context compaction: call search_nodes 'sdd-change' to recover state\n\nAPPLY STRATEGY: show full task plan first → ask for explicit approval → implement by phases → ask between phases whether to continue.\n\nSURVIVING COMPACTION: if context resets, immediately call search_nodes 'sdd-change' to recover the state of active changes before continuing.",
+      "description": "SDD Orchestrator — spec-driven development with subagents",
+      "prompt": "{file:~/.config/opencode/skills/sdd-orchestrator/system-prompt.md}",
       "permission": {
         "edit": "deny",
         "write": "deny",
         "bash": "deny",
         "patch": "deny",
-        "read": "deny",
-        "glob": "deny",
-        "grep": "deny",
-        "task": "allow"
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "task": {
+          "*": "deny",
+          "sdd-*": "allow"
+        }
+      },
+      "tools": {
+        "context7_*": true,
+        "memory_*": true
+      }
+    },
+    "sdd-explore": {
+      "tools": {
+        "context7_*": true,
+        "memory_*": true
       }
     }
   },
+  "experimental": {
+    "openTelemetry": true
+  },
+  "plugin": ["./plugins/opentelemetry.js"],
   "mode": {},
-  "plugin": [],
   "command": {},
   "username": "jmurphy",
   "provider": {
@@ -42,7 +58,8 @@
       "name": "BABA Coding Plan",
       "options": {
         "baseURL": "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1",
-        "apiKey": "{env:CODING_PLAN_BABA}"
+        "apiKey": "{env:CODING_PLAN_BABA}",
+        "timeout": 600000
       },
       "models": {
         "qwen3.5-plus": {
@@ -83,7 +100,7 @@
         "--api-key",
         "{env:CONTEXT7_TOKEN}"
       ],
-      "enabled": true
+      "enabled": false
     },
     "memory": {
       "type": "local",
@@ -133,8 +150,50 @@
       "*": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
-      "*.env.example": "allow"
+      "*.env.example": "allow",
+      ".zshenv*": "deny",
+      "**/.zshenv*": "deny",
+      "spec-store": "allow",
+      "spec-store/**/*": "allow"
+    },
+    "bash": {
+      "*": "ask",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git branch*": "allow",
+      "git show*": "allow",
+      "git commit*": "ask",
+      "git push*": "ask",
+      "gh status*": "allow",
+      "gh issue*": "ask",
+      "gh pr*": "ask",
+      "grep*": "allow",
+      "env*": "deny",
+      "printenv*": "deny",
+      "export*": "deny",
+      "set | grep*": "deny",
+      "declare -x*": "deny"
     }
+  },
+  "default_agent": "sdd-orchestrator",
+  "model": "bailian-coding-plan/qwen3.5-plus",
+  "small_model": "bailian-coding-plan/MiniMax-M2.5",
+  "watcher": {
+    "ignore": [
+      "node_modules/**",
+      "dist/**",
+      ".git/**",
+      "*.log",
+      ".next/**",
+      "coverage/**",
+      "build/**"
+    ]
+  },
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 15000
   },
   "keybinds": {
     "leader": "ctrl+space",

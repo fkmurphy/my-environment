@@ -2,17 +2,24 @@
 description: "SDD: Verify implementation against specs"
 ---
 
-Detect the active change in `.spec/changes/` and verify the implementation.
+Verify the implementation of the active change.
 
-Invoke @sdd-verify to:
+**Before starting**:
+1. Resolve `{SPEC_STORE}`
+2. Search memory: `search_nodes("sdd-{change}")`
+
+Invoke @sdd-verify passing:
+- `{SPEC_STORE}` — resolved path
+- `persistence_mode` — `mcp-memory` (default)
+- Change name
+
+The subagent will:
 1. Run `yarn test` and `yarn lint`
-2. Validate that each spec scenario has coverage in the implementation
-3. Generate a report at `.spec/changes/<name>/verify-report.md`
+2. Validate spec coverage
+3. Generate verify-report.md
 
-The report classifies findings as:
-- CRITICAL: blocking, cannot archive
-- WARNING: important but non-blocking
-- SUGGESTION: optional improvement
+**After verification**:
+Save to memory: `add_observations({ entityName: "sdd-{change}", contents: ["verify-status: {PASS/FAIL}", "critical-issues: {N}"] })`
 
-Show the report to the user. If there are CRITICALs, indicate they must be resolved before `/sdd-archive`.
-If everything is OK, indicate the next step is `/sdd-archive`.
+Show the report. If CRITICALs exist, indicate they must be resolved before `/sdd-archive`.
+If OK, indicate next step is `/sdd-archive`.

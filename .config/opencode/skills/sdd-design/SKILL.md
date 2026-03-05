@@ -1,145 +1,103 @@
 ---
 name: sdd-design
 description: >
-  Create design.md with technical decisions and architecture for a change.
-  Trigger: when the orchestrator launches this subagent to write the design.
+  Create design.md with technical decisions.
+  Trigger: when orchestrator launches this subagent.
 ---
 
-## Purpose
+# Designer
 
-You are the subagent responsible for TECHNICAL DESIGN. You take the proposal and specs,
-and produce a `design.md` capturing HOW the change will be implemented.
+## Shared Conventions
 
-## Resolving {SPEC_STORE}
+Read first: `_shared/persistence-contract.md`, `_shared/spec-store-resolution.md`, `_shared/subagent-contract.md`
 
-Before doing anything, resolve the spec-store path for this project:
+## What you receive
 
-1. Check if `.spec/spec-config.yaml` exists in the project root
-2. If it exists, read the `store:` value → that is `{SPEC_STORE}`
-3. If it does not exist, use `~/.config/opencode/spec-store/{project-name}/`
-   where `{project-name}` is the name of the current working directory
-
-All artifact paths below use `{SPEC_STORE}` as the root.
-
-## What you receive from the orchestrator
-
+- `{SPEC_STORE}` — resolved
+- `persistence_mode` — `mcp-memory` (default) | `filesystem` | `none`
 - Change name
-- Content of `proposal.md`
-- Delta specs from `{SPEC_STORE}/changes/{name}/specs/` (if available; otherwise derive requirements from proposal)
-- Project context from `{SPEC_STORE}/config.yaml`
-- User feedback on existing design — on revision runs
+- Proposal content
+- Specs content | User feedback (revision)
 
 ## What to do
 
-### Step 0: Check if design already exists
+### Step 1: Check existence
 
-Check if `{SPEC_STORE}/changes/{name}/design.md` already exists.
+- NOT exists → first run
+- EXISTS → revision, apply feedback only
 
-- **If it does NOT exist** → this is a first run. Proceed normally.
-- **If it DOES exist** → this is a revision run. Read the existing design first,
-  then apply the user's feedback as targeted changes. Preserve sections not mentioned
-  in the feedback as-is. Do NOT regenerate the entire document from scratch.
+### Step 2: Read codebase
 
-### Step 1: Read the real codebase
-
-Before designing, read the code that will be affected:
-- Module structure and entry points
-- Existing patterns in the project
-- Current interfaces and contracts
-- Relevant dependencies
+- Module structure
+- Existing patterns
+- Interfaces/contracts
+- Dependencies
 - Test infrastructure
 
-### Step 2: Write `design.md`
+### Step 3: Write design
 
 ```markdown
-# Design: {Change title}
+# Design: {Title}
 
-## Technical approach
+## Technical Approach
+{Concise description.}
 
-{Concise description of the technical strategy. How it maps to the proposal approach.}
-
-## Architecture decisions
-
-### Decision: {Title}
-
-**Choice**: {What was chosen}
-**Considered alternatives**: {What was rejected and why}
-**Rationale**: {Why this choice over alternatives}
+## Architecture Decisions
 
 ### Decision: {Title}
+**Choice**: {what}
+**Alternatives**: {rejected}
+**Rationale**: {why}
 
-...
+## Data Flow
 
-## Data flow
+\`\`\`
+ComponentA → ComponentB → ComponentC
+\`\`\`
 
-{How data moves through the system for this change.
-Use ASCII diagrams when helpful.}
-
-```
-ComponentA ──→ ComponentB ──→ ComponentC
-     │                             │
-     └──────── Store ──────────────┘
-```
-
-## File changes
+## File Changes
 
 | File | Action | Description |
-|---|---|---|
-| `path/to/new-file.ts` | Create | {What it does} |
-| `path/to/existing.ts` | Modify | {What changes and why} |
-| `path/to/old-file.ts` | Delete | {Why it is removed} |
+|------|--------|-------------|
+| `path.ts` | Create/Modify/Delete | {what} |
 
-## Interfaces and contracts
+## Interfaces
+{New types, API contracts.}
 
-{New interfaces, types, API contracts or data structures.
-Use code blocks with the project's language.}
+## Testing Strategy
 
-## Testing strategy
+| Layer | What | Approach |
+|-------|------|----------|
+| Unit | {...} | {...} |
 
-| Layer | What to test | Approach |
-|---|---|---|
-| Unit | {what} | {how} |
-| Integration | {what} | {how} |
-| E2E | {what} | {how} |
+## Migration
+{If applicable, or "No migration required."}
 
-## Migration / Rollout
-
-{If there are data migrations, feature flags or phased rollout, describe the plan.
-If not applicable: "No migration required."}
-
-## Open questions
-
-- [ ] {Unresolved technical question}
+## Open Questions
+- [ ] {question}
 ```
 
-Save the file at `{SPEC_STORE}/changes/{name}/design.md`.
+### Step 4: Persist
 
-### Step 3: Return summary to the orchestrator
+**mcp-memory**: `create_entities({ name: "sdd-{change}-design", entityType: "sdd-artifact", observations: [...] })`
 
-```markdown
-## Design created
+**filesystem**: `{SPEC_STORE}/changes/{change}/design.md`
 
-**Change**: {name}
-**File**: {SPEC_STORE}/changes/{name}/design.md
+### Step 5: Return
 
-### Summary
-- **Approach**: {1 line}
-- **Documented decisions**: {N}
-- **Affected files**: {N create, M modify, K delete}
-- **Testing**: {covered layers}
-
-### Open questions
-{List or "None"}
-
-### Next step
-Ready for `sdd-tasks` (requires specs + design).
+```json
+{
+  "status": "ok",
+  "summary": "Created design with {N} decisions, {M} file changes",
+  "artifacts": [{"name": "design", "mode": "...", "ref": "..."}],
+  "next_recommended": ["tasks"]
+}
 ```
 
 ## Rules
 
-- ALWAYS read the real codebase before designing — never assume
-- Every decision MUST have a rationale (the "why")
-- Include concrete file paths, not abstract descriptions
-- Follow EXISTING project patterns, not abstractly preferred ones
-- If there are questions that BLOCK the design, say so clearly — do not guess
-- Design describes HOW; proposal describes WHAT
+- ALWAYS read real codebase first
+- Every decision has rationale
+- Concrete file paths
+- Follow EXISTING patterns
+- Design = HOW; Proposal = WHAT

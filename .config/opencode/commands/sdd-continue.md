@@ -2,31 +2,52 @@
 description: "SDD: Create the next artifact of the active change"
 ---
 
-Detect the active change in the spec-store (the one not in `archive/`) and create the next artifact in the dependency chain.
+Create the next missing artifact for the active change.
+
+**Before starting**:
+1. Resolve `{SPEC_STORE}`
+2. Detect active change (not in archive/)
+3. If multiple active, ask which one
 
 Dependency chain:
-1. `proposal.md` → requires: nothing
-2. `specs/` → requires: `proposal.md`
-3. `design.md` → requires: `proposal.md` (can run in parallel with specs)
-4. `tasks.md` → requires: `specs/` + `design.md`
+1. `proposal` → no deps
+2. `specs` → requires proposal
+3. `design` → requires proposal (parallel with specs)
+4. `tasks` → requires specs + design
 
-If there is more than one active change, ask the user which one to continue.
+Detect missing artifact and invoke subagent:
+- Missing `specs`: invoke @sdd-spec
+- Missing `design`: invoke @sdd-design
+- Missing `tasks`: invoke @sdd-tasks
 
-Detect the next missing artifact and invoke the corresponding subagent:
-- Missing `specs/`: invoke @sdd-spec
-- Missing `design.md`: invoke @sdd-design
-- Missing `tasks.md`: invoke @sdd-tasks
+Pass to subagent:
+- `{SPEC_STORE}` — resolved
+- `persistence_mode` — `mcp-memory` (default)
+- Change name
+- Content of dependency artifacts (read from memory or filesystem)
 
-After the subagent finishes, show the full artifact summary to the user and ask exactly this:
+After subagent finishes:
+Show artifact and ask:
+```
+Do you approve this {artifact}?
+- **yes** — ready for next step
+- **revise: [feedback]** — update and show again
+```
 
-  "Do you approve this [artifact name]?
-   - **yes** — ready for the next step
-   - **revise: [your feedback]** — I'll update it and show it again"
+**After "yes"**:
+```typescript
+add_observations({
+  observations: [{
+    entityName: `sdd-{change}`,
+    contents: [
+      `{artifact}-approved: {ISO date}`,
+      `key-decision: {1-line summary}`
+    ]
+  }]
+})
+```
 
-RULES for this gate:
-- Do NOT proceed to the next artifact unless the user responds with an explicit "yes"
-- Any other response (correction, question, feedback) means: invoke the same subagent again
-  passing the existing artifact content + the user's feedback, then show the result and ask again
-- This loop repeats as many times as needed until the user explicitly approves
-- Never interpret silence, a question, or partial feedback as approval
-- Each artifact has its own independent approval gate — approving specs does not approve design
+**Rules**:
+- Only proceed on explicit "yes"
+- "revise:" → re-invoke with feedback
+- Each artifact has independent gate

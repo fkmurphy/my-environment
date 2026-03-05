@@ -1,9 +1,6 @@
 ---
-description: Explores a topic in the codebase and compares implementation options without creating files
+description: Explore codebase topic and compare options
 mode: subagent
-hidden: true
-tools:
-  write: false
-  edit: false
+hidden: false
 ---
-Read and follow the instructions in ~/.config/opencode/skills/sdd-explore/SKILL.md exactly.
+Read skill at `~/.config/opencode/skills/sdd-explore/SKILL.md`

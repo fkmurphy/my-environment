@@ -1,113 +1,95 @@
 ---
 name: sdd-propose
 description: >
-  Create or update the proposal.md for a SDD change.
-  Trigger: when the orchestrator launches this subagent to write or revise a proposal.
+  Create or update proposal.md for a SDD change.
+  Trigger: when orchestrator launches this subagent.
 ---
 
-## Purpose
+# Proposal Writer
 
-You are the subagent responsible for creating or updating the PROPOSAL. You take the explore
-result (or user feedback on an existing proposal) and produce a clear, actionable `proposal.md`.
+## Shared Conventions
 
-## What you receive from the orchestrator
+Read first: `_shared/persistence-contract.md`, `_shared/spec-store-resolution.md`, `_shared/subagent-contract.md`
 
-- `{SPEC_STORE}` — resolved absolute path to this project's spec-store
+## What you receive
+
+- `{SPEC_STORE}` — resolved
+- `persistence_mode` — `mcp-memory` (default) | `filesystem` | `none`
 - Change name
-- Result from sdd-explore (analysis + recommendation) — on first run
-- User feedback on the existing proposal — on revision runs
-- Project context from `{SPEC_STORE}/config.yaml`
+- Explore result (first run) | User feedback (revision)
+- Project context
 
 ## What to do
 
-### Step 1: Check if a proposal already exists
+### Step 1: Check existence
 
-Check if `{SPEC_STORE}/changes/{change-name}/proposal.md` exists.
-
-- **If it does NOT exist** → this is a first run. Proceed to Step 2.
-- **If it DOES exist** → this is a revision run. Read the existing proposal first,
-  then apply the user's feedback as targeted changes. Do NOT rewrite sections
-  that were not mentioned in the feedback. Preserve the rest as-is.
+- NOT exists → first run, create new
+- EXISTS → revision, apply feedback only
 
 ### Step 2: Read context
 
-- Read `{SPEC_STORE}/config.yaml` to understand the stack and project rules
-- Read `{SPEC_STORE}/specs/` if it exists to understand the current state
+- `{SPEC_STORE}/config.yaml`
+- `{SPEC_STORE}/specs/` if exists
+- Existing proposal (revision)
 
-### Step 3: Create the change directory (first run only)
-
-```
-{SPEC_STORE}/changes/{change-name}/
-```
-
-### Step 4: Write or update `proposal.md`
-
-On first run, write the full proposal. On revision, apply only the requested changes.
+### Step 3: Write proposal
 
 ```markdown
-# Proposal: {Descriptive change title}
+# Proposal: {Title}
 
 ## Motivation
-
-{Why this change is needed. Problem it solves or improvement it introduces.
-2-4 paragraphs. No unnecessary jargon.}
+{Why needed. 2-4 paragraphs.}
 
 ## Scope
 
 ### Includes
-- {What is within scope}
-- {Which modules/files are affected}
+- {Within scope}
 
-### Explicitly excludes
-- {What is out of scope to avoid scope creep}
+### Excludes
+- {Out of scope}
 
-## Technical approach
+## Technical Approach
+{Chosen approach. Why over alternatives.}
 
-{Description of the chosen approach (based on the explore recommendation).
-Why it was chosen over alternatives.}
+## Affected Areas
 
-## Affected areas
-
-| Module/File | Change type | Impact |
-|---|---|---|
-| {path/to/file} | Create / Modify / Delete | {brief description} |
+| Module/File | Type | Impact |
+|-------------|------|--------|
+| {path} | Create/Modify/Delete | {description} |
 
 ## Risks
 
-| Risk | Probability | Impact | Mitigation |
-|---|---|---|---|
-| {description} | High/Medium/Low | High/Medium/Low | {plan} |
+| Risk | Prob | Impact | Mitigation |
+|------|------|--------|------------|
+| {desc} | H/M/L | H/M/L | {plan} |
 
-## Rollback plan
+## Rollback Plan
+{How to revert. Concrete.}
 
-{How to revert if something goes wrong. Concrete and actionable.}
-
-## Success criteria
-
-- [ ] {Verifiable condition that indicates the change is successful}
-- [ ] {Another condition}
+## Success Criteria
+- [ ] {Verifiable condition}
 ```
 
-### Step 5: Return summary to the orchestrator
+### Step 4: Persist
 
-```markdown
-## Proposal {created/updated}
+**mcp-memory**: `create_entities({ name: "sdd-{change}-proposal", entityType: "sdd-artifact", observations: [...] })`
 
-**Change**: {name}
-**File**: {SPEC_STORE}/changes/{name}/proposal.md
-**Mode**: {first run / revision — what was changed}
+**filesystem**: Write to `{SPEC_STORE}/changes/{change}/proposal.md`
 
-### Summary
-- **Motivation**: {1 line}
-- **Scope**: {N affected areas}
-- **Risks**: {overall level: low/medium/high}
-- **Rollback**: {feasible/requires attention}
+### Step 5: Return
+
+```json
+{
+  "status": "ok",
+  "summary": "Created proposal for {change}",
+  "artifacts": [{"name": "proposal", "mode": "...", "ref": "..."}],
+  "next_recommended": ["specs", "design"]
+}
 ```
 
 ## Rules
 
-- The proposal describes WHAT and WHY, not the detailed technical HOW (that is the design)
-- Scope must be specific — if something is not in "Includes", it is not implemented
-- Rollback must be concrete, not "revert the changes"
-- Follow the explore analysis approach; do not invent a different one without justification
-- On revision: apply ONLY what the user asked to change — do not alter the rest of the proposal
+- Proposal = WHAT and WHY, not detailed HOW
+- Scope must be specific
+- Rollback must be concrete
+- Revision: apply ONLY feedback, preserve rest

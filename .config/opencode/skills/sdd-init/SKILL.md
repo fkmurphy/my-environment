@@ -1,48 +1,43 @@
 ---
 name: sdd-init
 description: >
-  Bootstrap the SDD spec-store for a project.
-  Trigger: when the orchestrator launches this subagent to initialize SDD.
+  Bootstrap SDD spec-store for a project.
+  Trigger: when orchestrator launches this subagent.
 ---
 
-## Purpose
+# Initializer
 
-You are the subagent responsible for INITIALIZING the SDD structure for the current project.
-You detect the tech stack, resolve the spec-store location, and create the base configuration.
+## Shared Conventions
 
-## Spec-store resolution
+Read first: `_shared/persistence-contract.md`, `_shared/spec-store-resolution.md`, `_shared/subagent-contract.md`
 
-The spec-store is the directory where all SDD artifacts live (outside the project repo by default).
+## What you receive
 
-Resolution order (first match wins):
-1. If `.spec/spec-config.yaml` exists in the project root → read `store:` from it
-2. Default: `~/.config/opencode/spec-store/{project-name}/`
-
-`{project-name}` is the basename of the current working directory.
+- `{SPEC_STORE}` — resolved or default
+- Project root path
 
 ## What to do
 
-### Step 1: Detect the stack
+### Step 1: Detect stack
 
-Check project files:
-- `package.json` → Node.js, dependencies, test/lint scripts
-- `tsconfig.json` → TypeScript configuration
+Check files:
+- `package.json` → Node.js, test/lint
+- `tsconfig.json` → TypeScript
 - `go.mod` → Go
-- `pyproject.toml` / `requirements.txt` → Python
-- CI files in `.github/workflows/`
-- ORM/DB in dependencies (prisma, typeorm, drizzle, etc.)
+- `pyproject.toml` → Python
+- `.github/workflows/` → CI
+- Dependencies → ORM (prisma, typeorm)
 
-### Step 2: Resolve spec-store path
+### Step 2: Resolve spec-store
 
-Check if `.spec/spec-config.yaml` exists in the project root:
-- If yes → read `store:` value, resolve relative paths against the project root
-- If no → use `~/.config/opencode/spec-store/{project-name}/`
+- Check `.spec/spec-config.yaml`
+- Default: `~/.config/opencode/spec-store/{project}/`
 
-### Step 3: Check if spec-store already exists
+### Step 3: Check existence
 
-If `{SPEC_STORE}/config.yaml` already exists, report its content and ask the orchestrator whether to overwrite.
+If `{SPEC_STORE}/config.yaml` exists → report, ask to overwrite.
 
-### Step 4: Create the spec-store structure
+### Step 4: Create structure
 
 ```
 {SPEC_STORE}/
@@ -52,98 +47,86 @@ If `{SPEC_STORE}/config.yaml` already exists, report its content and ask the orc
     └── archive/
 ```
 
-### Step 5: Generate `{SPEC_STORE}/config.yaml`
+### Step 5: Generate config
 
 ```yaml
 schema: spec-driven
-project: {project-name}
-project-root: {absolute path to the project}
+project: {name}
+project-root: {absolute}
 
 context: |
-  Stack: {detected stack}
-  Test: {detected test command, default: yarn test}
-  Lint: {detected lint command, default: yarn lint}
-  DB: {detected ORM/DB if any}
-  CI: {detected CI platform}
+  Stack: {detected}
+  Test: {command}
+  Lint: {command}
+  DB: {orm}
+  CI: {platform}
 
 rules:
   proposal:
-    - Include rollback plan for risky changes
-    - Identify affected modules and files
+    - Include rollback plan
+    - Identify affected modules
   specs:
-    - Use Given/When/Then format for scenarios
-    - Use RFC 2119 keywords: MUST, SHALL, SHOULD, MAY
-    - Every requirement must have at least one scenario
+    - Use Given/When/Then
+    - Use RFC 2119 keywords
   design:
-    - Document decisions with considered alternatives and rationale
-    - Include ASCII diagrams for complex flows
-    - List all files to create/modify/delete
+    - Document decisions with rationale
   tasks:
-    - Group by phases with hierarchical numbering (1.1, 1.2...)
-    - Each task must reference a concrete file path
-    - Include testing tasks in a separate phase
+    - Group by phases
   apply:
-    - camelCase for variables and functions
-    - PascalCase for classes and types
-    - Never use `any` in TypeScript — use specific types
-    - Prefer functional methods (map, filter, reduce) over loops
-    - No comments unless logic is complex or non-obvious
-    - Look up the repository before executing database actions
+    - camelCase/PascalCase
+    - Never use any
+    - Prefer functional methods
   verify:
-    - Run yarn test and yarn lint
-    - Validate each spec scenario against the implementation
+    - Run yarn test + yarn lint
   archive:
-    - Warn before merging destructive deltas (removes large sections)
+    - Warn on destructive merges
 ```
 
-### Step 6: Write `.spec/spec-config.yaml` in the project root
+### Step 6: Create project config
 
-Create this minimal file in the project repo so opencode knows where the spec-store is:
-
+`.spec/spec-config.yaml`:
 ```yaml
-# SDD spec-store location for this project.
-# This file is safe to commit — it contains no sensitive data.
-# To share specs with your team, change `store` to a path inside the repo (e.g. ./docs/spec).
-store: ~/.config/opencode/spec-store/{project-name}
+# SDD spec-store location. Safe to commit.
+store: ~/.config/opencode/spec-store/{project}
 ```
 
-Also add `.spec/` to the project's `.gitignore` if it exists (only the directory, not the spec-config file):
-
+Add to `.gitignore`:
 ```
-# SDD — spec working directory (personal, not committed)
 .spec/
 !.spec/spec-config.yaml
 ```
 
-### Step 7: Return summary to the orchestrator
+### Step 7: Save to memory
 
-```markdown
-## SDD Initialized
+```typescript
+create_entities({
+  entities: [{
+    name: `sdd-init-{project}`,
+    entityType: "sdd-project",
+    observations: [
+      `initialized: {ISO date}`,
+      `stack: {detected}`,
+      `spec-store: {SPEC_STORE}`
+    ]
+  }]
+})
+```
 
-**Project**: {project-name}
-**Spec-store**: {SPEC_STORE}
-**Detected stack**: {stack}
-**Test**: {command}
-**Lint**: {command}
+### Step 8: Return
 
-### Structure created
-- `{SPEC_STORE}/config.yaml`
-- `{SPEC_STORE}/specs/` (empty — filled via changes)
-- `{SPEC_STORE}/changes/archive/`
-
-### Project files updated
-- `.spec/spec-config.yaml` created (safe to commit)
-- `.gitignore` updated (if present)
-
-### Next steps
-Ready for `/sdd-explore <topic>` or `/sdd-new <change-name>`.
+```json
+{
+  "status": "ok",
+  "summary": "Initialized SDD for {project} with {stack}",
+  "artifacts": [{"name": "config", "mode": "...", "ref": "..."}],
+  "next_recommended": ["explore", "new"]
+}
 ```
 
 ## Rules
 
-- NEVER create example spec files — only the empty structure
-- If the spec-store already exists, report and ask for confirmation before modifying
-- Detect the real stack, do not assume
-- Keep `config.yaml` concise (max 35 lines)
-- The `.spec/spec-config.yaml` in the project is the ONLY file that belongs in the repo
-- Always add `.spec/` to `.gitignore` with the exception rule for `spec-config.yaml`
+- NO example specs — empty structure only
+- Ask before overwriting
+- Detect real stack
+- config.yaml max 35 lines
+- Only `.spec/spec-config.yaml` in repo

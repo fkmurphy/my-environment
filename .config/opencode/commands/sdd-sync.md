@@ -1,14 +1,24 @@
 ---
-description: "SDD: Merge delta specs into the main spec without archiving"
+description: "SDD: Merge delta specs without archiving"
 ---
 
-Detect the active change in `.spec/changes/` and merge its delta specs into `.spec/specs/` without archiving the change.
+Merge delta specs into source of truth without archiving the change.
 
-Invoke @sdd-archive in sync-only mode:
-- Merge each delta spec from `.spec/changes/<name>/specs/` into `.spec/specs/`
-- For existing specs: apply ADDED/MODIFIED/REMOVED sections
-- For new specs: copy directly
-- Do NOT move the change to archive
+**Before starting**:
+1. Resolve `{SPEC_STORE}`
 
-Show a summary of which specs were updated.
-Useful when you want to update the source of truth without closing the change yet.
+Invoke @sdd-archive in sync-only mode passing:
+- `{SPEC_STORE}` — resolved path
+- `persistence_mode` — `mcp-memory` (default)
+- Change name
+- Mode: `sync-only`
+
+The subagent will:
+- Merge each delta spec into main specs
+- Apply ADDED/MODIFIED/REMOVED sections
+- NOT move change to archive
+- NOT save to memory
+
+Show summary of updated specs.
+
+Use when you want to update source of truth without closing the change.

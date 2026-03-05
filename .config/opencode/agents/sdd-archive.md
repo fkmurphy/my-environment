@@ -1,6 +1,6 @@
 ---
-description: Merges delta specs into .spec/specs/, moves the change to archive and saves memory
+description: Archive completed change and merge specs
 mode: subagent
 hidden: true
 ---
-Read and follow the instructions in ~/.config/opencode/skills/sdd-archive/SKILL.md exactly.
+Read skill at `~/.config/opencode/skills/sdd-archive/SKILL.md`
