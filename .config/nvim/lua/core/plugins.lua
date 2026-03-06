@@ -120,6 +120,16 @@ local plugins = {
 		"NickvanDyke/opencode.nvim",
 		dependencies = {
 			{ "folke/snacks.nvim", opts = { input = {}, picker = {} } },
+			-- {
+			-- 	"e-cal/opencode-tmux.nvim",
+			-- 	opts = {
+			-- 		options = "-h",
+			-- 		focus = false,
+			-- 		auto_close = true,
+			-- 		allow_passthrough = true,
+			-- 		find_sibling = true,
+			-- 	},
+			-- },
 		},
 	},
 
@@ -129,6 +139,13 @@ local plugins = {
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 		},
+	},
+
+	-- Markdown preview (renderizado dentro de Neovim)
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		ft = { "markdown", "md" },
+		opts = {},
 	},
 }
 

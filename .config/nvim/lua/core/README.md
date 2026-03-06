@@ -112,6 +112,15 @@
 | `Ctrl+h/j/k/l` | Navegar entre ventanas |
 | `<leader>vr` | Resize vertical |
 
+## MARKDOWN PREVIEW (render-markdown.nvim)
+
+| Keybinding | Descripción |
+|------------|-------------|
+| `:MarkdownRenderToggle` | Activar/desactivar preview |
+| `:MarkdownRender` | Forzar renderizado |
+
+El preview se activa automáticamente al abrir archivos `.md`.
+
 ## TESTING (vim-test)
 
 | Keybinding | Descripción |

@@ -33,7 +33,7 @@
   "experimental": {
     "openTelemetry": true
   },
-  "plugin": ["./plugins/opentelemetry.js"],
+  "plugin": [],
   "mode": {},
   "command": {},
   "username": "jmurphy",

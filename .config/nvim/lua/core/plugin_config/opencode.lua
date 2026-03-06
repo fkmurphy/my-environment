@@ -1,12 +1,31 @@
 vim.g.opencode_opts = {
 	provider = {
 		enabled = "tmux",
+		-- tmux_target = nil, --"Opencode",
 		-- tmux = {
-		-- 	pane = "1",
+		-- 	target = "Opencode",
+		-- 	-- pane_id = "1",
 		-- },
 	},
-	on_opencode_not_found = function() end,
+	-- server = {
+	-- 	enabled = true,
+	-- 	port = 8080,
+	-- },
+	on_opencode_not_found = function()
+		-- -- Opción A (segura): solo avisar, NO crear nada mágico
+		-- vim.notify(
+		-- 	"No se encontró ninguna sesión de opencode para este proyecto.\n"
+		-- 		.. "Abrí una con: `opencode --port 8080` en tmux o usa <leader>ot para embebido.",
+		-- 	vim.log.levels.WARN
+		-- )
+
+		-- Opción B (más automática): descomenta esto si querés que cree embebido
+		-- require("opencode").toggle()
+	end,
 	on_submit = function() end,
+	project_root = function()
+		return vim.fn.getcwd()
+	end,
 }
 
 vim.opt.autoread = true
@@ -14,6 +33,12 @@ vim.opt.autoread = true
 local opencode = require("opencode")
 
 vim.keymap.set({ "n", "x" }, "<leader>oa", function()
+	-- local ok = pcall(function()
+	-- 	opencode.prompt("@this: ", { submit = true })
+	-- end)
+	-- if not ok then
+	-- 	vim.notify("No hay opencode en este tmux pane. Split + opencode tui", vim.log.levels.ERROR)
+	-- end
 	opencode.ask("@this: ", { submit = true })
 end, { desc = "Ask about this" })
 
@@ -56,3 +81,7 @@ end, { desc = "Messages half page down" })
 vim.keymap.set("n", "<leader>oq", function()
 	opencode.ask("", { submit = true })
 end)
+
+-- local ot_config = require("opencode-tmux.config")
+
+-- ot_config.setup({ auto_close = true, find_sibling = true })
