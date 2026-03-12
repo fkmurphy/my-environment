@@ -5,7 +5,7 @@ description: "SDD: Implement the tasks of the active change"
 Detect the active change and run the implementation workflow.
 
 **Before starting**:
-1. Resolve `{SPEC_STORE}` (see `_shared/spec-store-resolution.md`)
+1. Resolve `{SPEC_STORE}` (see `~/.opencode/skills/_shared/spec-store-resolution.md`)
 2. Search memory for existing context: `search_nodes("sdd-{change}")`
 
 Step 1 — Plan:

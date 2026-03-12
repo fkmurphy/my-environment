@@ -140,7 +140,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # Opcodel
 # ------------------
 
-export PATH=$HOME/.opencode/bin:$PATH
+export PATH=$PATH:$HOME/.opencode/
 
 # ------------------
 # FZF
@@ -155,3 +155,16 @@ export PATH=$HOME/.opencode/bin:$PATH
 source ~/.aliases
 
 eval "$(direnv hook zsh)"
+
+
+# ----------------
+# GCLOUD
+# ----------------
+
+if [ -d $HOME/google-cloud-sdk/bin ]; then export PATH=$PATH:$HOME/google-cloud-sdk/bin; fi
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi

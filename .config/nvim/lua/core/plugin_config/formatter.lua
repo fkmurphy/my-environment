@@ -75,12 +75,19 @@ require("formatter").setup {
   }
 }
 
-vim.cmd [[
-augroup FormatAutogroup
-  autocmd!
-  autocmd BufWritePost * FormatWrite
-augroup END
-]]
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = { "*.ts", "*.tsx", "*.js", "*.jsx", "*.mjs", "*.css", "*.scss", "*.less", "*.json", "*.yaml", "*.html", "*.md" },
+	group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
+	callback = function()
+		local clients = vim.lsp.get_clients({ bufnr = 0 })
+		for _, client in ipairs(clients) do
+			if client.server_capabilities.documentFormattingProvider then
+				vim.lsp.buf.format({ async = false, timeout_ms = 1000 })
+				return
+			end
+		end
+	end,
+})
 
 -- autosave all
 -- vim.cmd[[autocmd BufWritePre * lua vim.lsp.buf.format()]]

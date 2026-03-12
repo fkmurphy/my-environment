@@ -58,8 +58,7 @@
       "name": "BABA Coding Plan",
       "options": {
         "baseURL": "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1",
-        "apiKey": "{env:CODING_PLAN_BABA}",
-        "timeout": 600000
+        "apiKey": "{env:CODING_PLAN_BABA}"
       },
       "models": {
         "qwen3.5-plus": {

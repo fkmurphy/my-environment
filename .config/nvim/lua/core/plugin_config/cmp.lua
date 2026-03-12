@@ -1,0 +1,32 @@
+local cmp = require("cmp")
+
+require("luasnip.loaders.from_vscode").lazy_load()
+
+cmp.setup({
+	mapping = cmp.mapping.preset.insert({
+		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<Tab>"] = cmp.mapping.select_next_item(),
+		["<S-Tab>"] = cmp.mapping.select_prev_item(),
+		["<C-o>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.abort(),
+		["<CR>"] = cmp.mapping.confirm({ select = true }),
+	}),
+	snippet = {
+		expand = function(args)
+			require("luasnip").lsp_expand(args.body)
+		end,
+	},
+	sources = cmp.config.sources({
+		{ name = "buffer", keyword_length = 3 },
+		{ name = "nvim_lsp", max_item_count = 25 },
+		{ name = "luasnip" },
+	}, {
+		{ name = "buffer" },
+	}),
+	performance = {
+		debounce = 80, -- cuánto espera antes de pedir completado
+		throttle = 40, -- rate limit interno
+		fetching_timeout = 200,
+	},
+})

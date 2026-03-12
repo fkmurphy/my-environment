@@ -1,11 +1,12 @@
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local util = require("lspconfig.util")
 
 -- Instalación automática con Mason
 require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"ts_ls",
-		"eslint",
+		-- "eslint",
 		"html",
 		"lua_ls",
 		"cssls",
@@ -14,9 +15,13 @@ require("mason-lspconfig").setup({
 		"pyright",
 		"tflint",
 	},
+
 	-- Esta parte handlers cambia completamente
 	handlers = {
 		function(server_name)
+			if server_name == "eslint" then
+				return
+			end
 			-- La magia: vim.lsp.config en lugar de lspconfig[server].setup
 			vim.lsp.config(server_name, {
 				capabilities = capabilities,
@@ -24,29 +29,50 @@ require("mason-lspconfig").setup({
 			vim.lsp.enable(server_name)
 		end,
 		-- Handlers específicos siguen parecidos pero con sintaxis nueva
-		["eslint"] = function()
-			vim.lsp.config("eslint", {
-				capabilities = capabilities,
-				settings = {
-					format = { enable = true },
-					codeActionsOnSave = {
-						mode = "all",
-						rules = { "!debugger", "!no-only-tests/*" },
-					},
-				},
-			})
-			vim.lsp.enable("eslint")
-		end,
+		-- ["eslint"] = function()
+		-- 	vim.lsp.config("eslint", {
+		-- 		capabilities = capabilities,
+		-- 		settings = {
+		-- 			format = { enable = true },
+		-- 			codeActionsOnSave = {
+		-- 				mode = "all",
+		-- 				rules = { "!debugger", "!no-only-tests/*" },
+		-- 			},
+		-- 		},
+		-- 	})
+		-- 	vim.lsp.enable("eslint")
+		-- end,
 		["ts_ls"] = function()
 			vim.lsp.config("ts_ls", {
 				capabilities = capabilities,
+				flags = {
+					debounce_text_changes = 150,
+				},
+				root_dir = function(fname)
+					return util.root_pattern("tsconfig.json", "package.json", ".git")(fname)
+				end,
+				init_options = {
+					preferences = {
+						includeCompletionsForModuleExports = true,
+					},
+				},
 				settings = {
 					typescript = {
 						inlayHints = {
 							includeInlayParameterNameHints = "literal",
 							includeInlayFunctionParameterTypeHints = false,
 							includeInlayFunctionLikeReturnTypeHints = true,
+							includeInlayVariableTypeHints = false,
 						},
+						maxTsServerMemory = 8192,
+					},
+					javascript = {
+						inlayHints = {
+							includeInlayParameterNameHints = "literal",
+							includeInlayFunctionParameterTypeHints = false,
+							includeInlayVariableTypeHints = false,
+						},
+						maxTsServerMemory = 8192,
 					},
 				},
 			})
@@ -84,9 +110,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		-- Lo que antes era Lspsaga:
 
-		-- <Leader>gd: goto_definition (COMENTADO - colisiona con Telescope)
-		-- map("n", "<Leader>gd", vim.lsp.buf.definition, "Goto Definition")
-		-- Usar Telescope: <leader>gd (builtin.lsp_definitions)
+		-- <Leader>gd: Usando Telescope (ver telescope.lua)
+		-- Permite elegir entre múltiples definiciones e ir a node_modules
 
 		-- <Leader>pd: "peek definition" – no existe nativo; alternativa simple:
 		map("n", "<Leader>pd", function()
@@ -98,7 +123,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- <Leader>gr: builtin.lsp_references
 		-- gr: builtin.lsp_references
 		-- <Leader>lo: builtin.treesitter
-		-- <Leader>gd: builtin.lsp_definitions
 		-- <Leader>ws: builtin.lsp_workspace_symbols
 		-- <Leader>gI: builtin.lsp_implementations
 		-- <Leader>gt: builtin.lsp_type_definitions
@@ -126,9 +150,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.diagnostic.config({
 	underline = true,
-	update_in_insert = false,
+	update_in_insert = true,
 	virtual_text = true,
 	severity_sort = true,
+	signs = true,
 })
 
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })

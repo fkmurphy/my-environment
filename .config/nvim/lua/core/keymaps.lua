@@ -2,7 +2,7 @@ vim.keymap.set('n', '<c-k>', ':wincmd k<CR>')
 vim.keymap.set('n', '<c-j>', ':wincmd j<CR>')
 vim.keymap.set('n', '<c-h>', ':wincmd h<CR>')
 vim.keymap.set('n', '<c-l>', ':wincmd l<CR>')
-vim.keymap.set('n', '<leader>h', ':nohlsearch<CR>')
+vim.keymap.set('n', '<leader>cl', ':nohlsearch<CR>', { desc = "Clear search highlight" })
 
 -- vim.keymap.set('n', '<leader>nt', ':NERDTreeFind<CR>') not used
 -- save

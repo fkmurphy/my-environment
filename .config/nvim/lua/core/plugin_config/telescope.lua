@@ -1,4 +1,5 @@
 local actions = require("telescope.actions")
+local action_state = require("telescope.actions.state")
 
 require("telescope").setup({
 	defaults = {
@@ -7,6 +8,7 @@ require("telescope").setup({
 				["<C-t>"] = actions.select_tab,
 				["<C-s>"] = actions.select_horizontal,
 				["<C-v>"] = actions.select_vertical,
+				["<esc>"] = actions.close,
 			},
 			n = {
 				["<C-t>"] = actions.select_tab,
@@ -15,6 +17,7 @@ require("telescope").setup({
 				["t"] = actions.select_tab,
 				["s"] = actions.select_horizontal,
 				["v"] = actions.select_vertical,
+				["q"] = actions.close,
 			},
 		},
 		layout_strategy = "vertical",
@@ -29,10 +32,42 @@ require("telescope").setup({
 		file_ignore_patterns = {
 			"vendor",
 			"node_modules",
+			"%.git/",
+			"dist/",
+			"build/",
+			"%.min%.js",
+			"%.min%.css",
+			"package%-lock%.json",
+			"yarn%.lock",
+			"pnpm%-lock%.yaml",
 		},
+		vimgrep_arguments = {
+			"rg",
+			"--color=never",
+			"--no-heading",
+			"--with-filename",
+			"--line-number",
+			"--column",
+			"--smart-case",
+			"--hidden",
+			"--glob=!.git/*",
+			"--glob=!node_modules/*",
+		},
+		file_previewer = require("telescope.previewers").vim_buffer_cat.new,
+		grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
+		qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
 		history = {
 			path = vim.fn.stdpath("data") .. "/databases/telescope_history.sqlite3",
 			limit = 100,
+		},
+	},
+	pickers = {
+		lsp_definitions = {
+			timeout = 8000,
+			file_ignore_patterns = {}, -- Permitir node_modules para definiciones
+		},
+		lsp_references = {
+			timeout = 8000,
 		},
 	},
 })

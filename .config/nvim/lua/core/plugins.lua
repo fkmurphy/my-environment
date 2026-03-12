@@ -13,6 +13,10 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local plugins = {
+	{
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		dependencies = { "williamboman/mason.nvim" },
+	},
 	-- pack manager
 	-- 'wbthomason/packer.nvim', -- use lazy.nvim
 	-- visual
@@ -59,7 +63,19 @@ local plugins = {
 		build = ":TSUpdate",
 	},
 	"nvim-treesitter/nvim-treesitter-textobjects",
-	"vim-test/vim-test",
+
+	-- Testing (neotest reemplaza vim-test)
+	{
+		"nvim-neotest/neotest",
+		dependencies = {
+			"nvim-neotest/nvim-nio",
+			"nvim-lua/plenary.nvim",
+			"antoinemadec/FixCursorHold.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"marilari88/neotest-vitest",
+			"nvim-neotest/neotest-jest",
+		},
+	},
 
 	-- git decorations and use into the vim
 	"lewis6991/gitsigns.nvim",
@@ -139,6 +155,96 @@ local plugins = {
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 		},
+	},
+
+	-- Productividad: navegación y keymaps
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"gbprod/yanky.nvim",
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"ThePrimeagen/harpoon",
+		branch = "harpoon2",
+		dependencies = { "nvim-lua/plenary.nvim" },
+	},
+
+	-- UI/UX
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
+		opts = {},
+	},
+	{
+		"stevearc/dressing.nvim",
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"lukas-reineke/indent-blankline.nvim",
+		main = "ibl",
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"folke/todo-comments.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		event = "VeryLazy",
+		opts = {},
+	},
+
+	-- LSP/Desarrollo
+	{
+		"folke/trouble.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"windwp/nvim-ts-autotag",
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"smjonas/inc-rename.nvim",
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"dnlhc/glance.nvim",
+		event = "VeryLazy",
+		opts = {},
+	},
+
+	-- Git mejorado
+	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"sindrets/diffview.nvim",
+			"nvim-tree/nvim-web-devicons",
+		},
+		event = "VeryLazy",
+		opts = {},
+	},
+	{
+		"sindrets/diffview.nvim",
+		event = "VeryLazy",
+		opts = {},
 	},
 
 	-- Markdown preview (renderizado dentro de Neovim)

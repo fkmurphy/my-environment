@@ -1,6 +1,7 @@
 vim.g.opencode_opts = {
 	provider = {
 		enabled = "tmux",
+		cmd = "direnv exec . opencode --port",
 		-- tmux_target = nil, --"Opencode",
 		-- tmux = {
 		-- 	target = "Opencode",

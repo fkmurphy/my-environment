@@ -9,7 +9,7 @@ description: >
 
 ## Shared Conventions
 
-Read first: `_shared/persistence-contract.md`, `_shared/spec-store-resolution.md`, `_shared/subagent-contract.md`, `_shared/coding-standards.md`
+Read first: `../_shared/persistence-contract.md`, `../_shared/spec-store-resolution.md`, `../_shared/subagent-contract.md`, `../_shared/coding-standards.md`
 
 ## What you receive
 
@@ -18,7 +18,7 @@ Read first: `_shared/persistence-contract.md`, `_shared/spec-store-resolution.md
 - Change name
 - Proposal, specs, design, tasks content
 - Phase(s) to implement
-- Coding preferences (see `_shared/coding-standards.md`)
+- Coding preferences (see `../_shared/coding-standards.md`)
 
 ## What to do
 
@@ -64,7 +64,7 @@ Report results.
 
 ## Coding Standards
 
-From `_shared/coding-standards.md`:
+From `../_shared/coding-standards.md`:
 
 - NO comments unless complex
 - `camelCase` vars, `PascalCase` types

@@ -9,7 +9,7 @@ description: >
 
 ## Shared Conventions
 
-Read first: `_shared/persistence-contract.md`, `_shared/spec-store-resolution.md`, `_shared/subagent-contract.md`
+Read first: `../_shared/persistence-contract.md`, `../_shared/spec-store-resolution.md`, `../_shared/subagent-contract.md`
 
 ## What you receive
 

@@ -1,0 +1,5 @@
+#!/bin/bash
+# Tmux ya está en el directorio correcto gracias a nvim, 
+# pero forzamos a direnv a inyectar la cascada sin necesidad de un prompt.
+
+exec direnv exec "$PWD" /Users/jmurphy/.opencode/bin/opencode "$@"
