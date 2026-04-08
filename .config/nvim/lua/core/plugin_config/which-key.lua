@@ -25,5 +25,7 @@ require("which-key").setup({
 		{ "<leader>ha", group = "harpoon", icon = "" },
 		{ "<leader>s", group = "search", icon = "" },
 		{ "<leader>t", group = "test", icon = "" },
+		{ "<leader>a", group = "aerial", icon = "" },
+		{ "<leader>aa", desc = "Toggle Outline" },
 	},
 })

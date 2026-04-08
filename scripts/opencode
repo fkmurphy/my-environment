@@ -1,5 +1,5 @@
 #!/bin/bash
-# Tmux ya está en el directorio correcto gracias a nvim, 
-# pero forzamos a direnv a inyectar la cascada sin necesidad de un prompt.
-
+# Usa el directorio de neovim si está disponible, si no fallback a $PWD
+TARGET_DIR="${TMUX_NVIM_CWD:-$PWD}"
+cd "$TARGET_DIR" || exit 1
 exec direnv exec "$PWD" /Users/jmurphy/.opencode/bin/opencode "$@"

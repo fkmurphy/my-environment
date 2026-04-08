@@ -1,3 +1,12 @@
+-- Set tmux environment variable with neovim's CWD so opencode starts in the right directory
+vim.api.nvim_create_autocmd("DirChanged", {
+	callback = function()
+		vim.fn.system(string.format("tmux set-environment TMUX_NVIM_CWD '%s'", vim.fn.getcwd()))
+	end,
+})
+-- Set initial CWD
+vim.fn.system(string.format("tmux set-environment TMUX_NVIM_CWD '%s'", vim.fn.getcwd()))
+
 vim.g.opencode_opts = {
 	provider = {
 		enabled = "tmux",
