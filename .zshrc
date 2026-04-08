@@ -171,3 +171,6 @@ if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 # TMUX sessions alias
 alias tw="~/.tmux/sessions/work.sh"
+
+# opencode
+export PATH=/Users/jmurphy/.opencode/bin:$PATH

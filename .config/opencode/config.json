@@ -33,7 +33,7 @@
   "experimental": {
     "openTelemetry": true
   },
-  "plugin": [],
+  "plugin": ["langfuse"],
   "mode": {},
   "command": {},
   "username": "jmurphy",
@@ -90,6 +90,17 @@
     }
   },
   "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "environment": {
+        "PLAYWRIGHT_MCP_EXTENSION_TOKEN":"2gsIPvuyeONL0U-t_N8F3naGV0mQS5rxcTWRMraxvEM"
+      }
+    },
     "context7": {
       "type": "local",
       "command": [

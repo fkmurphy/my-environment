@@ -1,18 +1,13 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { LangfuseSpanProcessor } from '@langfuse/otel';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
-const endpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4318';
+console.log('[Langfuse] Initializing SDK...');
+console.log('[Langfuse] Service:', process.env.OTEL_SERVICE_NAME || 'opencode');
 
-console.log('[OpenTelemetry] Initializing SDK...');
-console.log('[OpenTelemetry] Endpoint:', endpoint);
-console.log('[OpenTelemetry] Service:', process.env.OTEL_SERVICE_NAME || 'opencode');
-
-const traceExporter = new OTLPTraceExporter({
-  url: `${endpoint}/v1/traces`,
-});
+const langfuseProcessor = new LangfuseSpanProcessor();
 
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
@@ -20,14 +15,14 @@ const sdk = new NodeSDK({
     [SEMRESATTRS_SERVICE_VERSION]: '1.0.0',
     'deployment.environment': 'local',
   }),
-  traceExporter,
+  spanProcessors: [langfuseProcessor],
   instrumentations: [getNodeAutoInstrumentations()],
 });
 
 sdk.start();
 
-console.log('[OpenTelemetry] SDK started');
+console.log('[Langfuse] SDK started. Set LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY environment variables.');
 
-export const OpenTelemetryPlugin = async () => {
+export const LangfusePlugin = async () => {
   return {};
 };
