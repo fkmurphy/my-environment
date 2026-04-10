@@ -92,6 +92,7 @@
   "mcp": {
     "playwright": {
       "type": "local",
+      "enabled": false,
       "command": [
         "npx",
         "-y",
@@ -139,7 +140,7 @@
       ],
       "environment": {
         "DATABASE_URI": "{env:POSTGRES_LOCAL_URI}"
-      }
+      },
     },
     "penpot": {
       "type": "remote",

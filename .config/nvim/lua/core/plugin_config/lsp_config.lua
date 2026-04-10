@@ -6,7 +6,7 @@ require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"ts_ls",
-		-- "eslint",
+
 		"html",
 		"lua_ls",
 		"cssls",
@@ -19,29 +19,31 @@ require("mason-lspconfig").setup({
 	-- Esta parte handlers cambia completamente
 	handlers = {
 		function(server_name)
-			if server_name == "eslint" then
-				return
-			end
-			-- La magia: vim.lsp.config en lugar de lspconfig[server].setup
 			vim.lsp.config(server_name, {
 				capabilities = capabilities,
 			})
 			vim.lsp.enable(server_name)
 		end,
-		-- Handlers específicos siguen parecidos pero con sintaxis nueva
-		-- ["eslint"] = function()
-		-- 	vim.lsp.config("eslint", {
-		-- 		capabilities = capabilities,
-		-- 		settings = {
-		-- 			format = { enable = true },
-		-- 			codeActionsOnSave = {
-		-- 				mode = "all",
-		-- 				rules = { "!debugger", "!no-only-tests/*" },
-		-- 			},
-		-- 		},
-		-- 	})
-		-- 	vim.lsp.enable("eslint")
-		-- end,
+		["eslint"] = function()
+			vim.lsp.config("eslint", {
+				capabilities = capabilities,
+				root_dir = util.root_pattern(
+					".eslintrc",
+					".eslintrc.js",
+					".eslintrc.cjs",
+					".eslintrc.json",
+					"eslint.config.js",
+					"eslint.config.mjs",
+					"eslint.config.cjs",
+					"package.json"
+				),
+				settings = {
+					format = { enable = false },
+					workingDirectory = { mode = "auto" },
+				},
+			})
+			vim.lsp.enable("eslint")
+		end,
 		["ts_ls"] = function()
 			vim.lsp.config("ts_ls", {
 				capabilities = capabilities,

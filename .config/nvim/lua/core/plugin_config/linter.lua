@@ -10,7 +10,7 @@ lint.linters_by_ft = {
 	typescriptreact = { "eslint_d" },
 }
 
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter", "InsertLeave" }, {
 	group = vim.api.nvim_create_augroup("lint", { clear = true }),
 	callback = function()
 		if vim.bo.modifiable then

@@ -19,9 +19,8 @@
 local util = require "formatter.util"
 require("formatter").setup {
   -- Enable or disable logging
-  logging = true,
-  -- Set the log level
-  log_level = vim.log.levels.DEBUG,
+  logging = false,
+  log_level = vim.log.levels.WARN,
   -- All formatter configurations are opt-in
   filetype = {
     -- Formatter configurations for filetype "lua" go here
@@ -75,17 +74,11 @@ require("formatter").setup {
   }
 }
 
-vim.api.nvim_create_autocmd("BufWritePre", {
+vim.api.nvim_create_autocmd("BufWritePost", {
 	pattern = { "*.ts", "*.tsx", "*.js", "*.jsx", "*.mjs", "*.css", "*.scss", "*.less", "*.json", "*.yaml", "*.html", "*.md" },
 	group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
 	callback = function()
-		local clients = vim.lsp.get_clients({ bufnr = 0 })
-		for _, client in ipairs(clients) do
-			if client.server_capabilities.documentFormattingProvider then
-				vim.lsp.buf.format({ async = false, timeout_ms = 1000 })
-				return
-			end
-		end
+		vim.cmd("FormatWriteLock")
 	end,
 })
 
